@@ -1,0 +1,17 @@
+{
+  "name": "@flowtel/tracker",
+  "version": "0.0.1",
+  "description": "Lightweight event tracking script for Flowtel analytics",
+  "main": "dist/tracker.js",
+  "scripts": {
+    "build": "node build.js",
+    "build:min": "node build.js --minify",
+    "clean": "rm -rf dist",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@flowtel/shared": "file:../shared",
+    "esbuild": "^0.20.0",
+    "typescript": "^5.3.3"
+  }
+}
