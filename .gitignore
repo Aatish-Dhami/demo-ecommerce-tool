@@ -7,6 +7,10 @@ dist/
 # Logs
 *.log
 npm-debug.log*
+pnpm-debug.log*
+
+# pnpm
+.pnpm-store/
 
 # OS files
 .DS_Store

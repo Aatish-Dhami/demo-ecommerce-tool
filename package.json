@@ -1,0 +1,26 @@
+{
+  "name": "flowtel",
+  "version": "0.0.1",
+  "private": true,
+  "description": "E-commerce analytics platform with event tracking and AI-powered insights",
+  "scripts": {
+    "dev": "pnpm --parallel -r run dev",
+    "dev:shop": "pnpm --filter @flowtel/shop dev",
+    "dev:dashboard": "pnpm --filter @flowtel/dashboard dev",
+    "dev:backend": "pnpm --filter @flowtel/backend start:dev",
+    "build": "pnpm --filter @flowtel/shared build && pnpm --parallel --filter '!@flowtel/shared' -r run build",
+    "build:tracker": "pnpm --filter @flowtel/tracker build",
+    "test": "pnpm -r run test",
+    "test:backend": "pnpm --filter @flowtel/backend test",
+    "lint": "pnpm -r run lint",
+    "clean": "pnpm -r run clean"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "packageManager": "pnpm@9.15.0"
+}
