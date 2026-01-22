@@ -14,12 +14,19 @@ An analytics dashboard that:
 
 - React 18
 - TypeScript
-- Vite
-- Chart library (Recharts or Chart.js)
-- TanStack Query (data fetching)
+- Vite 5.x
+- Chart library (TODO - Recharts or Chart.js)
+- TanStack Query (TODO)
 
-## Structure
+## Current Structure
 
+```
+src/
+├── main.tsx              # App entry point
+└── App.tsx               # Root component (scaffold)
+```
+
+### Planned Structure (TODO)
 ```
 src/
 ├── main.tsx              # App entry point
@@ -44,10 +51,24 @@ src/
 ├── api/
 │   └── client.ts         # API client config
 └── styles/
-    └── ...               # CSS/Tailwind styles
+    └── ...               # CSS styles
 ```
 
-## Pages & Routes
+## Implementation Status
+
+| Feature | Status |
+|---------|--------|
+| Vite + React scaffold | ✅ Done |
+| Basic App component | ✅ Done |
+| Overview page | ⏳ TODO |
+| Stats cards | ⏳ TODO |
+| Charts | ⏳ TODO |
+| Events list | ⏳ TODO |
+| Insights display | ⏳ TODO |
+| Chat interface | ⏳ TODO |
+| API integration | ⏳ TODO |
+
+## Pages & Routes (Planned)
 
 | Route | Page | Description |
 |-------|------|-------------|
@@ -56,7 +77,7 @@ src/
 | `/insights` | InsightsPage | AI-generated insights |
 | `/chat` | ChatPage | Chat with analytics |
 
-## Dashboard Sections
+## Dashboard Sections (Planned)
 
 ### Overview Page
 - **Stat Cards**: Total events, page views, purchases, revenue
@@ -79,39 +100,18 @@ src/
 - **Input**: Natural language questions
 - **Responses**: AI answers with data context
 
-## API Integration
+## Commands
 
-```typescript
-// Stats hook
-const { data: stats, isLoading } = useStats();
-
-// Events hook with filters
-const { data: events } = useEvents({
-  eventType: 'add_to_cart',
-  startDate: '2024-01-01',
-  limit: 50
-});
-
-// Insights hook
-const { data: insights } = useInsights();
-
-// Chat mutation
-const { mutate: sendMessage } = useChat();
-sendMessage({ message: 'What is the conversion rate?' });
+```bash
+pnpm dev      # Start dev server on :5173 (Vite default)
+pnpm build    # Production build
+pnpm preview  # Preview production build
 ```
 
 ## Environment Variables
 
 ```bash
 VITE_API_URL=http://localhost:4000    # Backend API URL
-```
-
-## Commands
-
-```bash
-pnpm dev      # Start dev server on :3001
-pnpm build    # Production build
-pnpm preview  # Preview production build
 ```
 
 ## Conventions

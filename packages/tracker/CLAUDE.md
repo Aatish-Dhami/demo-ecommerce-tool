@@ -6,33 +6,51 @@ Embeddable JavaScript tracking script for capturing e-commerce events.
 
 A lightweight, vanilla TypeScript tracking library that:
 - Captures user interactions on e-commerce sites
-- Batches and sends events to the backend
-- Persists session across page loads
-- Queues events when offline
+- Batches and sends events to the backend (TODO)
+- Persists session across page loads (TODO)
+- Queues events when offline (TODO)
 
 ## Tech Stack
 
 - Vanilla TypeScript (no framework dependencies)
-- Bundled with Rollup/esbuild
-- Output: Single `tracker.js` file
+- Bundled with esbuild
+- Output: Single `tracker.js` file (IIFE format)
 
-## Structure
+## Current Structure
 
+```
+src/
+└── index.ts              # Main entry with tracker API
+```
+
+### Planned Structure (TODO)
 ```
 src/
 ├── index.ts              # Main entry, global `tracker` object
 ├── core/
-│   ├── Tracker.ts        # Main tracker class
 │   ├── Session.ts        # Session management
 │   └── Queue.ts          # Event queue with batching
-├── events/
-│   ├── pageView.ts       # Auto page view tracking
-│   └── helpers.ts        # Event creation helpers
 ├── transport/
 │   └── http.ts           # HTTP transport layer
 └── utils/
     ├── storage.ts        # LocalStorage helpers
     └── uuid.ts           # UUID generation
+```
+
+## Current API
+
+```typescript
+// Initialize tracker
+tracker.init(config: TrackerConfig): void
+
+// Track custom event
+tracker.track(eventType: string, properties?: object): void
+
+// Get current config
+tracker.getConfig(): TrackerConfig | null
+
+// Check if initialized
+tracker.isInitialized(): boolean
 ```
 
 ## Usage
@@ -44,7 +62,8 @@ src/
 <script>
   tracker.init({
     shopId: 'shop_123',
-    endpoint: 'http://localhost:4000/api/events'
+    endpoint: 'http://localhost:4000/api/events',
+    debug: true  // Enable console logging
   });
 </script>
 ```
@@ -52,10 +71,6 @@ src/
 ### Track Events
 
 ```javascript
-// Auto-tracked on init
-// - page_view (every navigation)
-
-// Manual tracking
 tracker.track('product_viewed', {
   productId: 'prod-001',
   name: 'Wireless Headphones',
@@ -67,12 +82,6 @@ tracker.track('add_to_cart', {
   quantity: 1,
   price: 149.99
 });
-
-tracker.track('purchase_completed', {
-  orderId: 'ord-123',
-  total: 149.99,
-  items: [{ productId: 'prod-001', quantity: 1 }]
-});
 ```
 
 ## Configuration Options
@@ -83,58 +92,42 @@ interface TrackerConfig {
   endpoint: string;         // Required: API endpoint
   batchSize?: number;       // Events per batch (default: 10)
   flushInterval?: number;   // MS between flushes (default: 5000)
-  debug?: boolean;          // Enable console logging
+  debug?: boolean;          // Enable console logging (default: false)
 }
 ```
 
-## Event Structure
+## Implementation Status
 
-All events follow the `TrackingEvent` interface from `@flowtel/shared`:
-
-```typescript
-{
-  id: string;           // Auto-generated UUID
-  shopId: string;       // From config
-  sessionId: string;    // Auto-generated, persisted
-  eventType: string;    // EventType enum value
-  eventName: string;    // Human-readable name
-  properties: object;   // Event-specific data
-  timestamp: string;    // ISO 8601
-  url: string;          // Current page URL
-  userAgent: string;    // Browser user agent
-}
-```
-
-## Session Management
-
-- Session ID generated on first visit
-- Stored in localStorage: `flowtel_session_id`
-- Persists across page reloads
-- New session after 30 minutes of inactivity
-
-## Batching & Offline
-
-- Events queued in memory
-- Flushed every `flushInterval` ms or when `batchSize` reached
-- On flush failure, events kept in queue for retry
-- Queue persisted to localStorage on page unload
+| Feature | Status |
+|---------|--------|
+| `init()` with config validation | ✅ Done |
+| `track()` method (logging only) | ✅ Done |
+| `getConfig()` / `isInitialized()` | ✅ Done |
+| Event queue with batching | ⏳ TODO |
+| HTTP transport to backend | ⏳ TODO |
+| Session ID generation | ⏳ TODO |
+| localStorage persistence | ⏳ TODO |
+| Offline queue with retry | ⏳ TODO |
+| Auto page_view tracking | ⏳ TODO |
 
 ## Build
 
 ```bash
-pnpm build     # Bundle to dist/tracker.js
-pnpm build:min # Minified production build
+pnpm build       # Bundle to dist/tracker.js
+pnpm build:min   # Minified production build
+pnpm typecheck   # Type check without emit
+pnpm clean       # Remove dist/
 ```
 
-## Size Budget
+## Output
 
+- `dist/tracker.js` - IIFE bundle exposing global `tracker` object
+- No external runtime dependencies
 - Target: < 10KB gzipped
-- No external dependencies
-- Tree-shakeable internals
 
 ## Conventions
 
-- Use `EventType` enum from `@flowtel/shared`
-- All times in ISO 8601 format
-- UUIDs for event and session IDs
-- No PII in events (no emails, names, etc.)
+- Types imported from `@flowtel/shared` (build-time only)
+- Debug logs prefixed with `[Flowtel Tracker]`
+- Warns on double initialization
+- Throws on missing required config

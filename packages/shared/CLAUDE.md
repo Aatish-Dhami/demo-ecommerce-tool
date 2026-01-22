@@ -19,7 +19,8 @@ src/
 │   ├── stats.ts          # Stats, TopProduct interfaces
 │   ├── insights.ts       # Insight, InsightType interfaces
 │   ├── product.ts        # Product interface
-│   └── cart.ts           # Cart, CartItem interfaces
+│   ├── cart.ts           # Cart, CartItem interfaces
+│   └── tracker.ts        # TrackerConfig interface
 ├── constants/
 │   └── eventTypes.ts     # EventType enum
 └── data/
@@ -34,6 +35,7 @@ src/
 - `Insight`, `InsightType` - AI-generated insights
 - `Product` - Product catalog item
 - `Cart`, `CartItem` - Shopping cart structures
+- `TrackerConfig` - Configuration for tracker script initialization
 
 ### Constants
 - `EventType` - Enum of all tracking event types:

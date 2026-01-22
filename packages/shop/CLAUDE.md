@@ -14,11 +14,21 @@ A minimal e-commerce shop that demonstrates:
 
 - React 18
 - TypeScript
-- Vite
-- React Router (for navigation)
+- Vite 6.x
+- React Router (TODO)
 
-## Structure
+## Current Structure
 
+```
+src/
+├── main.tsx              # App entry point
+├── App.tsx               # Root component (scaffold)
+├── App.css               # App styles
+├── index.css             # Global styles
+└── vite-env.d.ts         # Vite type declarations
+```
+
+### Planned Structure (TODO)
 ```
 src/
 ├── main.tsx              # App entry point
@@ -40,10 +50,23 @@ src/
 ├── context/
 │   └── CartContext.tsx   # Cart provider
 └── styles/
-    └── ...               # CSS/Tailwind styles
+    └── ...               # CSS styles
 ```
 
-## Pages & Routes
+## Implementation Status
+
+| Feature | Status |
+|---------|--------|
+| Vite + React scaffold | ✅ Done |
+| Basic App component | ✅ Done |
+| Product list page | ⏳ TODO |
+| Product detail page | ⏳ TODO |
+| Cart functionality | ⏳ TODO |
+| Checkout flow | ⏳ TODO |
+| Tracker integration | ⏳ TODO |
+| React Router setup | ⏳ TODO |
+
+## Pages & Routes (Planned)
 
 | Route | Page | Description |
 |-------|------|-------------|
@@ -53,9 +76,7 @@ src/
 | `/checkout` | CheckoutPage | Checkout form |
 | `/confirmation` | ConfirmationPage | Order confirmation |
 
-## Tracked Events
-
-The shop tracks these events via `@flowtel/tracker`:
+## Tracked Events (Planned)
 
 | Event | Trigger | Properties |
 |-------|---------|------------|
@@ -66,18 +87,12 @@ The shop tracks these events via `@flowtel/tracker`:
 | `checkout_started` | Navigate to checkout | `cartTotal`, `itemCount` |
 | `purchase_completed` | Submit checkout | `orderId`, `total`, `items` |
 
-## Cart State
+## Commands
 
-Uses React Context for cart state:
-
-```typescript
-interface CartContextValue {
-  cart: Cart;
-  addToCart: (product: Product, quantity?: number) => void;
-  removeFromCart: (productId: string) => void;
-  updateQuantity: (productId: string, quantity: number) => void;
-  clearCart: () => void;
-}
+```bash
+pnpm dev      # Start dev server on :5173 (Vite default)
+pnpm build    # Production build
+pnpm preview  # Preview production build
 ```
 
 ## Environment Variables
@@ -85,14 +100,6 @@ interface CartContextValue {
 ```bash
 VITE_API_URL=http://localhost:4000    # Backend API URL
 VITE_SHOP_ID=shop_123                  # Shop identifier for tracking
-```
-
-## Commands
-
-```bash
-pnpm dev      # Start dev server on :3000
-pnpm build    # Production build
-pnpm preview  # Preview production build
 ```
 
 ## Conventions

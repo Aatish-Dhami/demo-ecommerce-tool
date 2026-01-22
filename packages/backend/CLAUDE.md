@@ -13,15 +13,20 @@ Backend server that:
 
 ## Tech Stack
 
-- NestJS + TypeScript
+- NestJS 10.x + TypeScript
 - SQLite (dev) / PostgreSQL (prod)
-- TypeORM or Prisma
-- OpenAI / Anthropic API for insights
+- TypeORM or Prisma (TODO)
+- OpenAI / Anthropic API for insights (TODO)
 
-## Architecture
+## Current Structure
 
-Using Domain-Driven Design (DDD) with CQRS pattern:
+```
+src/
+├── main.ts               # Bootstrap with CORS config
+└── app.module.ts         # Root module (empty)
+```
 
+### Planned Structure (TODO)
 ```
 src/
 ├── main.ts                    # Bootstrap
@@ -41,7 +46,6 @@ src/
 │   │       └── events.controller.ts
 │   │
 │   ├── insights/              # Insights Bounded Context
-│   │   ├── domain/
 │   │   ├── application/
 │   │   │   ├── commands/      # GenerateInsight command
 │   │   │   └── queries/       # ListInsights query
@@ -63,56 +67,55 @@ src/
     └── tracker.js             # Served tracker script
 ```
 
-## API Endpoints
+## Current Configuration
 
-| Method | Endpoint | Handler | Description |
-|--------|----------|---------|-------------|
-| POST | `/api/events` | IngestEventCommand | Ingest events (batch) |
-| GET | `/api/events` | ListEventsQuery | List events with filters |
-| GET | `/api/stats` | GetStatsQuery | Aggregated statistics |
-| GET | `/api/insights` | ListInsightsQuery | Generated insights |
-| POST | `/api/insights/generate` | GenerateInsightCommand | Trigger generation |
-| POST | `/api/chat` | AskQuestionCommand | Chat with analytics |
-| GET | `/tracker.js` | Static | Serve tracker script |
+### CORS
+Configured to allow requests from:
+- `http://localhost:3000` (shop)
+- `http://localhost:5173` (Vite dev)
+- `http://127.0.0.1:3000`
+- `http://127.0.0.1:5173`
 
-## CQRS Pattern
+Methods: GET, POST, PUT, DELETE, PATCH, OPTIONS
 
-### Commands (Write Operations)
-- Validate input
-- Update domain state
-- Emit domain events
-- Return void or ID
+### Port
+Default: `4000` (configurable via `PORT` env var)
 
-### Queries (Read Operations)
-- No side effects
-- Return DTOs
-- Can use read-optimized models
+## API Endpoints (Planned)
 
-```typescript
-// Command example
-@CommandHandler(IngestEventCommand)
-export class IngestEventHandler {
-  async execute(command: IngestEventCommand): Promise<void> {
-    const event = EventAggregate.create(command.data);
-    await this.repository.save(event);
-    this.eventBus.publish(new EventIngestedEvent(event.id));
-  }
-}
+| Method | Endpoint | Handler | Status |
+|--------|----------|---------|--------|
+| POST | `/api/events` | IngestEventCommand | ⏳ TODO |
+| GET | `/api/events` | ListEventsQuery | ⏳ TODO |
+| GET | `/api/stats` | GetStatsQuery | ⏳ TODO |
+| GET | `/api/insights` | ListInsightsQuery | ⏳ TODO |
+| POST | `/api/insights/generate` | GenerateInsightCommand | ⏳ TODO |
+| POST | `/api/chat` | AskQuestionCommand | ⏳ TODO |
+| GET | `/tracker.js` | Static | ⏳ TODO |
 
-// Query example
-@QueryHandler(GetStatsQuery)
-export class GetStatsHandler {
-  async execute(query: GetStatsQuery): Promise<Stats> {
-    return this.statsReadModel.getStats(query.shopId, query.dateRange);
-  }
-}
+## Implementation Status
+
+| Feature | Status |
+|---------|--------|
+| NestJS bootstrap | ✅ Done |
+| CORS configuration | ✅ Done |
+| AppModule scaffold | ✅ Done |
+| Events module | ⏳ TODO |
+| Database setup | ⏳ TODO |
+| Stats aggregation | ⏳ TODO |
+| Insights module | ⏳ TODO |
+| Chat module | ⏳ TODO |
+| Serve tracker.js | ⏳ TODO |
+
+## Commands
+
+```bash
+pnpm start:dev   # Start dev server with hot reload
+pnpm build       # Production build
+pnpm start       # Start production server
+pnpm test        # Run unit tests
+pnpm test:e2e    # Run e2e tests
 ```
-
-## Domain Events
-
-- `EventIngested` - New tracking event stored
-- `InsightGenerated` - AI insight created
-- `StatsUpdated` - Aggregations recalculated
 
 ## Environment Variables
 
@@ -122,16 +125,6 @@ DATABASE_URL=sqlite:./data.db
 OPENAI_API_KEY=sk-...
 # or
 ANTHROPIC_API_KEY=sk-ant-...
-```
-
-## Commands
-
-```bash
-pnpm dev       # Start dev server with hot reload
-pnpm build     # Production build
-pnpm start     # Start production server
-pnpm test      # Run unit tests
-pnpm test:e2e  # Run e2e tests
 ```
 
 ## Conventions
