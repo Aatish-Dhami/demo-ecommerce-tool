@@ -25,3 +25,9 @@ pnpm-debug.log*
 .env
 .env.local
 .env.*.local
+
+# Database
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
