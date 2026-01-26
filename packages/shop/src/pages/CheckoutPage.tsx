@@ -1,10 +1,29 @@
+import { useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../hooks/useCart';
+import { track, EventType } from '../lib/tracker';
 import './CheckoutPage.css';
 
 export function CheckoutPage() {
   const navigate = useNavigate();
   const { cart, clearCart } = useCart();
+  const hasTrackedCheckout = useRef(false);
+
+  useEffect(() => {
+    if (cart.items.length > 0 && !hasTrackedCheckout.current) {
+      track(EventType.CHECKOUT_STARTED, {
+        cartTotal: cart.total,
+        itemCount: cart.items.length,
+        items: cart.items.map((item) => ({
+          productId: item.productId,
+          name: item.productName,
+          quantity: item.quantity,
+          price: item.price,
+        })),
+      });
+      hasTrackedCheckout.current = true;
+    }
+  }, [cart.items, cart.total]);
 
   const formatPrice = (price: number): string => {
     return new Intl.NumberFormat('en-US', {
@@ -14,6 +33,20 @@ export function CheckoutPage() {
   };
 
   const handlePlaceOrder = () => {
+    const orderId = `ord-${Date.now()}`;
+
+    track(EventType.PURCHASE_COMPLETED, {
+      orderId,
+      total: cart.total,
+      itemCount: cart.items.length,
+      items: cart.items.map((item) => ({
+        productId: item.productId,
+        name: item.productName,
+        quantity: item.quantity,
+        price: item.price,
+      })),
+    });
+
     clearCart();
     navigate('/confirmation');
   };

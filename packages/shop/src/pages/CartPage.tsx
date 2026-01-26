@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useCart } from '../hooks/useCart';
+import { track, EventType } from '../lib/tracker';
 import './CartPage.css';
 
 export function CartPage() {
@@ -10,6 +11,15 @@ export function CartPage() {
       style: 'currency',
       currency: 'USD',
     }).format(price);
+  };
+
+  const handleRemoveFromCart = (productId: string, productName: string) => {
+    track(EventType.REMOVE_FROM_CART, {
+      productId,
+      name: productName,
+    });
+
+    removeFromCart(productId);
   };
 
   if (cart.items.length === 0) {
@@ -43,7 +53,7 @@ export function CartPage() {
               </span>
               <button
                 className="cart-page__remove-button"
-                onClick={() => removeFromCart(item.productId)}
+                onClick={() => handleRemoveFromCart(item.productId, item.productName)}
               >
                 Remove
               </button>
