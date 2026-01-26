@@ -1,9 +1,16 @@
 {
   "name": "@flowtel/shared",
   "version": "0.0.1",
+  "type": "module",
   "description": "Shared types and utilities for Flowtel analytics platform",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
   "scripts": {
     "build": "tsc",
     "clean": "rm -rf dist"
