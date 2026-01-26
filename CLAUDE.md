@@ -126,19 +126,42 @@ pnpm lint             # Lint all packages
 
 ## Environment Variables
 
-```bash
-# Backend
-DATABASE_URL=sqlite:./data.db
-OPENAI_API_KEY=sk-...
-PORT=4000
+### Backend Configuration
 
-# Shop
+The backend uses NestJS ConfigModule with validation. Copy `.env.example` to `.env` in `packages/backend/`:
+
+```bash
+# Server Configuration
+PORT=4000                                    # Server port (default: 4000)
+CORS_ORIGINS=http://localhost:3000,http://localhost:5173  # Comma-separated allowed origins
+
+# Database Configuration
+DATABASE_URL=sqlite:./data/events.db         # SQLite path (default: ./data/events.db)
+NODE_ENV=development                         # Environment (development/production)
+
+# LLM Configuration (at least one API key required)
+OPENAI_API_KEY=sk-...                        # OpenAI API key (takes precedence)
+ANTHROPIC_API_KEY=sk-ant-...                 # Anthropic API key (fallback)
+
+# Optional LLM Settings
+OPENAI_MODEL=gpt-4o-mini                     # OpenAI model (default: gpt-4o-mini)
+ANTHROPIC_MODEL=claude-3-haiku-20240307      # Anthropic model (default: claude-3-haiku)
+LLM_MAX_TOKENS=1024                          # Max response tokens (default: 1024)
+LLM_TEMPERATURE=0.7                          # Temperature 0-2 (default: 0.7)
+```
+
+Configuration is validated on startup using `class-validator`. Invalid values will prevent the app from starting.
+
+### Shop Configuration
+```bash
 VITE_API_URL=http://localhost:4000
 VITE_SHOP_ID=shop_123
 VITE_API_KEY=demo_api_key
 VITE_TRACKER_DEBUG=true
+```
 
-# Dashboard
+### Dashboard Configuration
+```bash
 VITE_API_URL=http://localhost:4000
 ```
 
@@ -149,7 +172,7 @@ VITE_API_URL=http://localhost:4000
 | `@flowtel/shared` | ✅ Complete | Types, DTOs, EventType enum, mock products |
 | `@flowtel/tracker` | ✅ Functional | init, track, HTTP send with retry, auto page views |
 | `@flowtel/shop` | ✅ Functional | Product list, detail (with tracking), cart (with tracking), checkout (checkout_started, purchase_completed events), order confirmation, tracker integration |
-| `@flowtel/backend` | ✅ Functional | Database, Event entity, Events/Stats/Insights/Chat controllers |
+| `@flowtel/backend` | ✅ Functional | Database, Event entity, Events/Stats/Insights/Chat controllers, Environment configuration with validation |
 | `@flowtel/dashboard` | 🟡 Partial | Basic React app, API client service, Stats/Events/Insights/Chat UI |
 
 ### Dashboard API Client
