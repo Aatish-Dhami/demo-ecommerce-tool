@@ -135,6 +135,8 @@ PORT=4000
 # Shop
 VITE_API_URL=http://localhost:4000
 VITE_SHOP_ID=shop_123
+VITE_API_KEY=demo_api_key
+VITE_TRACKER_DEBUG=true
 
 # Dashboard
 VITE_API_URL=http://localhost:4000
@@ -146,13 +148,13 @@ VITE_API_URL=http://localhost:4000
 |---------|--------|-------------|
 | `@flowtel/shared` | ✅ Complete | Types, DTOs, EventType enum, mock products |
 | `@flowtel/tracker` | ✅ Functional | init, track, HTTP send with retry, auto page views |
-| `@flowtel/shop` | ✅ Functional | Product list, detail, cart (with tracking), checkout, order confirmation |
+| `@flowtel/shop` | ✅ Functional | Product list, detail, cart (with tracking), checkout, order confirmation, tracker integration |
 | `@flowtel/backend` | 🟡 Partial | Database, Event entity, Events service (needs controller) |
 | `@flowtel/dashboard` | ⏳ Scaffold | Basic React app only |
 
 ### Next Steps
 1. Add Events controller to backend (POST/GET `/api/events`)
-2. ~~Integrate tracker into shop~~ (Partial: Cart tracking done, needs full initialization)
+2. ~~Integrate tracker into shop~~ ✅ Done (TASK-68, TASK-71)
 3. Build dashboard UI (stats, charts, event list)
 4. Add AI insights generation
 
