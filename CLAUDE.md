@@ -148,7 +148,7 @@ VITE_API_URL=http://localhost:4000
 |---------|--------|-------------|
 | `@flowtel/shared` | ✅ Complete | Types, DTOs, EventType enum, mock products |
 | `@flowtel/tracker` | ✅ Functional | init, track, HTTP send with retry, auto page views |
-| `@flowtel/shop` | ✅ Functional | Product list, detail, cart, checkout, order confirmation, tracker integration |
+| `@flowtel/shop` | ✅ Functional | Product list, detail, cart (with tracking), checkout, order confirmation, tracker integration |
 | `@flowtel/backend` | ✅ Functional | Database, Event entity, Events/Stats/Insights/Chat controllers |
 | `@flowtel/dashboard` | 🟡 Partial | Basic React app, API client service, Stats/Events/Insights/Chat UI |
 
@@ -177,10 +177,16 @@ The shop tracks the following events:
 - `purchase_completed` - Order confirmation
 
 ### Next Steps
-1. ~~Integrate tracker into shop~~ ✅ Done (TASK-68)
+1. ~~Integrate tracker into shop~~ ✅ Done (TASK-68, TASK-71)
 2. ~~Add tracking to ProductList~~ ✅ Done (TASK-69)
 3. Build more dashboard UI components (charts, visualizations)
 4. Enhance AI insights generation
+
+### Shop Tracker Integration
+The shop uses a vite alias to import tracker source directly:
+- `vite.config.ts`: Alias `@flowtel/tracker` to `../tracker/src/index.ts`
+- `tsconfig.json`: Path mapping for TypeScript resolution
+- `CartContext.tsx`: Tracks `add_to_cart` and `remove_from_cart` events
 
 ## Key Decisions
 
