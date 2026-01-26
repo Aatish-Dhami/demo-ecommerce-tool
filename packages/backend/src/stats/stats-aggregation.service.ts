@@ -23,7 +23,7 @@ interface SessionCountResult {
 }
 
 @Injectable()
-export class StatsService {
+export class StatsAggregationService {
   private readonly productMap: Map<string, string>;
 
   constructor(
