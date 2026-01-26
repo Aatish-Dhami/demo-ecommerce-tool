@@ -1,16 +1,16 @@
 // Types
-export { TrackingEvent } from './types/events';
-export { TopProduct, Stats } from './types/stats';
-export { InsightType, Insight } from './types/insights';
-export { TrackerConfig } from './types/tracker';
-export { Product } from './types/product';
-export { Cart, CartItem } from './types/cart';
+export { TrackingEvent } from './types/events.js';
+export { TopProduct, Stats } from './types/stats.js';
+export { InsightType, Insight } from './types/insights.js';
+export { TrackerConfig } from './types/tracker.js';
+export { Product } from './types/product.js';
+export { Cart, CartItem } from './types/cart.js';
 
 // Constants
-export { EventType } from './constants/eventTypes';
+export { EventType } from './constants/eventTypes.js';
 
 // Data
-export { products } from './data/products';
+export { products } from './data/products.js';
 
 // API DTOs
 export {
@@ -23,4 +23,4 @@ export {
   InsightGenerateRequestDto,
   PaginatedResponseDto,
   StatsQueryDto,
-} from './types/api';
+} from './types/api.js';

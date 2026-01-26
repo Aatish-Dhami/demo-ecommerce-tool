@@ -7,6 +7,7 @@ import { InsightsModule } from './insights/insights.module';
 import { LlmModule } from './llm/llm.module';
 import { StatsModule } from './stats/stats.module';
 import { ChatModule } from './chat/chat.module';
+import { TrackerModule } from './tracker/tracker.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { ChatModule } from './chat/chat.module';
     LlmModule,
     StatsModule,
     ChatModule,
+    TrackerModule,
   ],
   controllers: [],
   providers: [],

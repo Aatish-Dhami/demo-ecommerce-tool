@@ -1,4 +1,4 @@
-import { InsightType } from './insights';
+import { InsightType } from './insights.js';
 
 /**
  * DTO for creating a new tracking event.
