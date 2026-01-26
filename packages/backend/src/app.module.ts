@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 import { DatabaseModule } from './database/database.module';
 import { EventsModule } from './events/events.module';
 import { InsightsModule } from './insights/insights.module';
@@ -13,6 +14,7 @@ import { ChatModule } from './chat/chat.module';
       isGlobal: true,
       envFilePath: ['.env.local', '.env'],
     }),
+    EventEmitterModule.forRoot(),
     DatabaseModule,
     EventsModule,
     InsightsModule,
