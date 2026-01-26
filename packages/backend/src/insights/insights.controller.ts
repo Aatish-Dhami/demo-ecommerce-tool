@@ -1,14 +1,22 @@
 import {
   Controller,
+  Get,
   Post,
   Body,
+  Query,
   HttpCode,
   HttpStatus,
   HttpException,
   Logger,
 } from '@nestjs/common';
-import { Insight, InsightGenerateRequestDto } from '@flowtel/shared';
+import {
+  Insight,
+  InsightGenerateRequestDto,
+  InsightsQueryDto,
+  PaginatedResponseDto,
+} from '@flowtel/shared';
 import { InsightGenerationService } from './application/insight-generation.service';
+import { InsightRepository } from './infrastructure/insight.repository';
 import { LlmServiceError } from '../llm/llm.service';
 
 @Controller('api/insights')
@@ -17,7 +25,19 @@ export class InsightsController {
 
   constructor(
     private readonly insightGenerationService: InsightGenerationService,
+    private readonly insightRepository: InsightRepository,
   ) {}
+
+  @Get()
+  async findAll(
+    @Query() query: InsightsQueryDto,
+  ): Promise<PaginatedResponseDto<Insight>> {
+    return this.insightRepository.findAll({
+      type: query.type,
+      limit: query.limit,
+      offset: query.offset,
+    });
+  }
 
   @Post('generate')
   @HttpCode(HttpStatus.CREATED)
