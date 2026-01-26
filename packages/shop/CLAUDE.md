@@ -63,7 +63,7 @@ src/
 | `/product/:id` | ProductPage | Single product detail |
 | `/cart` | CartPage | Shopping cart |
 | `/checkout` | CheckoutPage | Checkout form |
-| `/confirmation` | OrderConfirmationPage | Order success |
+| `/order-confirmation` | OrderConfirmationPage | Order success |
 
 ## Cart Context
 
