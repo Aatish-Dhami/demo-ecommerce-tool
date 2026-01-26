@@ -16,6 +16,7 @@ export { products } from './data/products';
 export {
   CreateEventDto,
   EventsQueryDto,
+  InsightsQueryDto,
   ChatRequestDto,
   ChatSource,
   ChatResponseDto,

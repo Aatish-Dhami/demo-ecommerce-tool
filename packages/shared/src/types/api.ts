@@ -117,6 +117,21 @@ export interface InsightGenerateRequestDto {
 }
 
 /**
+ * DTO for querying/filtering insights.
+ * Used for GET /api/insights endpoint.
+ */
+export interface InsightsQueryDto {
+  /** Number of items to skip (offset-based pagination) */
+  offset?: number;
+
+  /** Number of items per page */
+  limit?: number;
+
+  /** Filter by insight type */
+  type?: InsightType;
+}
+
+/**
  * Generic paginated response wrapper.
  * Used for list endpoints that support pagination.
  */
