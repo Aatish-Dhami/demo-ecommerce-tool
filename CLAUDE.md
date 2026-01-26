@@ -150,7 +150,7 @@ VITE_API_URL=http://localhost:4000
 | `@flowtel/tracker` | ✅ Functional | init, track, HTTP send with retry, auto page views |
 | `@flowtel/shop` | ✅ Functional | Product list, detail (with tracking), cart (with tracking), checkout (checkout_started, purchase_completed events), order confirmation, tracker integration |
 | `@flowtel/backend` | ✅ Functional | Database, Event entity, Events/Stats/Insights/Chat controllers |
-| `@flowtel/dashboard` | 🟡 Partial | Basic React app, API client service, Stats/Events/Insights/Chat UI, StatsOverview connected to backend |
+| `@flowtel/dashboard` | 🟡 Partial | React Router routing, DashboardLayout with sidebar nav, Stats/Events/Insights/Chat pages, API client service, StatsOverview connected to backend |
 
 ### Dashboard API Client
 
@@ -185,12 +185,21 @@ The shop tracks the following events:
 - `checkout_started` - Checkout page view
 - `purchase_completed` - Order confirmation
 
+### Dashboard Routing (TASK-79)
+The dashboard uses React Router for client-side routing:
+- `/` → StatsPage (wraps StatsOverview)
+- `/events` → EventsPage
+- `/insights` → InsightsPage
+- `/chat` → ChatPage
+- All routes wrapped with DashboardLayout (sidebar navigation with Outlet)
+
 ### Next Steps
 1. ~~Integrate tracker into shop~~ ✅ Done (TASK-68, TASK-71)
 2. ~~Add tracking to ProductList~~ ✅ Done (TASK-69)
 3. ~~Connect StatsOverview to backend~~ ✅ Done (TASK-74)
-4. Build more dashboard UI components (charts, visualizations)
-5. Enhance AI insights generation
+4. ~~Configure dashboard routing~~ ✅ Done (TASK-79)
+5. Build more dashboard UI components (charts, visualizations)
+6. Enhance AI insights generation
 
 ### Shop Tracker Integration
 The shop uses a vite alias to import tracker source directly:
