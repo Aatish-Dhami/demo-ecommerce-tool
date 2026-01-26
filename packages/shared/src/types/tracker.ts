@@ -20,4 +20,7 @@ export interface TrackerConfig {
 
   /** Enable debug logging to console (default: false) */
   debug?: boolean;
+
+  /** Automatically track page views on init and SPA navigation (default: true) */
+  autoTrackPageViews?: boolean;
 }
