@@ -127,18 +127,19 @@ interface CartContextValue {
 | Cart page | ✅ Done |
 | Checkout page | ✅ Done |
 | Order confirmation | ✅ Done |
-| Tracker integration | ⏳ TODO |
+| Tracker integration | ✅ Done |
+| ProductDetail tracking | ✅ Done |
 
-## Tracked Events (Planned)
+## Tracked Events
 
-| Event | Trigger | Properties |
-|-------|---------|------------|
-| `page_view` | Route change | `path`, `title` |
-| `product_viewed` | View product detail | `productId`, `name`, `price` |
-| `add_to_cart` | Click "Add to Cart" | `productId`, `name`, `price`, `quantity` |
-| `remove_from_cart` | Remove from cart | `productId`, `name` |
-| `checkout_started` | Navigate to checkout | `cartTotal`, `itemCount` |
-| `purchase_completed` | Submit checkout | `orderId`, `total`, `items` |
+| Event | Trigger | Properties | Status |
+|-------|---------|------------|--------|
+| `page_view` | Route change | `path`, `title` | ✅ Auto |
+| `product_viewed` | View product detail | `productId`, `productName`, `price` | ✅ Done |
+| `add_to_cart` | Click "Add to Cart" | `productId`, `name`, `price`, `quantity` | ⏳ TODO |
+| `remove_from_cart` | Remove from cart | `productId`, `name` | ⏳ TODO |
+| `checkout_started` | Navigate to checkout | `cartTotal`, `itemCount` | ⏳ TODO |
+| `purchase_completed` | Submit checkout | `orderId`, `total`, `items` | ⏳ TODO |
 
 ## Commands
 
