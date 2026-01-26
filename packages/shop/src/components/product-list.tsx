@@ -1,5 +1,7 @@
+import { useEffect } from 'react';
 import { Product } from '@flowtel/shared';
 import { ProductCard } from './product-card';
+import { track, EventType } from '../lib/tracker';
 import './product-list.css';
 
 interface ProductListProps {
@@ -13,6 +15,14 @@ export function ProductList({
   onAddToCart,
   onProductClick,
 }: ProductListProps) {
+  useEffect(() => {
+    track(EventType.PAGE_VIEW, {
+      url: window.location.href,
+      path: window.location.pathname,
+      page: 'product_list',
+    });
+  }, []);
+
   if (products.length === 0) {
     return (
       <div className="product-list__empty">
