@@ -13,14 +13,14 @@ import {
   PaginatedResponseDto,
   TrackingEvent,
 } from '@flowtel/shared';
-import { EventsService } from './events.service';
+import { EventIngestionService } from './application/event-ingestion.service';
 import { EventQueryService } from './application/event-query.service';
 import { Event } from './entities/event.entity';
 
 @Controller('api/events')
 export class EventsController {
   constructor(
-    private readonly eventsService: EventsService,
+    private readonly eventIngestionService: EventIngestionService,
     private readonly eventQueryService: EventQueryService,
   ) {}
 
@@ -30,9 +30,9 @@ export class EventsController {
     @Body() createEventDto: CreateEventDto | CreateEventDto[],
   ): Promise<Event | Event[]> {
     if (Array.isArray(createEventDto)) {
-      return this.eventsService.createBatch(createEventDto);
+      return this.eventIngestionService.ingestBatch(createEventDto);
     }
-    return this.eventsService.create(createEventDto);
+    return this.eventIngestionService.ingestEvent(createEventDto);
   }
 
   @Get()
