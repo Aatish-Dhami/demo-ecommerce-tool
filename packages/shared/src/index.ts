@@ -6,6 +6,9 @@ export { TrackerConfig } from './types/tracker';
 export { Product } from './types/product';
 export { Cart, CartItem } from './types/cart';
 
+// Constants
+export { EventType } from './constants/eventTypes';
+
 // Data
 export { products } from './data/products';
 
