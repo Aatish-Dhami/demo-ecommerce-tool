@@ -8,12 +8,16 @@ import { LlmModule } from './llm/llm.module';
 import { StatsModule } from './stats/stats.module';
 import { ChatModule } from './chat/chat.module';
 import { TrackerModule } from './tracker/tracker.module';
+import { configuration } from './config/configuration';
+import { validate } from './config/env.validation';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: ['.env.local', '.env'],
+      load: [configuration],
+      validate,
     }),
     EventEmitterModule.forRoot(),
     DatabaseModule,

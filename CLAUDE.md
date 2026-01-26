@@ -126,20 +126,42 @@ pnpm lint             # Lint all packages
 
 ## Environment Variables
 
-```bash
-# Backend
-DATABASE_URL=sqlite:./data.db
-OPENAI_API_KEY=sk-...
-PORT=4000
-CORS_ORIGINS=http://localhost:3000,http://localhost:3001,http://localhost:5173  # Comma-separated, optional
+### Backend Configuration
 
-# Shop
+The backend uses NestJS ConfigModule with validation. Copy `.env.example` to `.env` in `packages/backend/`:
+
+```bash
+# Server Configuration
+PORT=4000                                    # Server port (default: 4000)
+CORS_ORIGINS=http://localhost:3000,http://localhost:5173  # Comma-separated allowed origins
+
+# Database Configuration
+DATABASE_URL=sqlite:./data/events.db         # SQLite path (default: ./data/events.db)
+NODE_ENV=development                         # Environment (development/production)
+
+# LLM Configuration (at least one API key required)
+OPENAI_API_KEY=sk-...                        # OpenAI API key (takes precedence)
+ANTHROPIC_API_KEY=sk-ant-...                 # Anthropic API key (fallback)
+
+# Optional LLM Settings
+OPENAI_MODEL=gpt-4o-mini                     # OpenAI model (default: gpt-4o-mini)
+ANTHROPIC_MODEL=claude-3-haiku-20240307      # Anthropic model (default: claude-3-haiku)
+LLM_MAX_TOKENS=1024                          # Max response tokens (default: 1024)
+LLM_TEMPERATURE=0.7                          # Temperature 0-2 (default: 0.7)
+```
+
+Configuration is validated on startup using `class-validator`. Invalid values will prevent the app from starting.
+
+### Shop Configuration
+```bash
 VITE_API_URL=http://localhost:4000
 VITE_SHOP_ID=shop_123
 VITE_API_KEY=demo_api_key
 VITE_TRACKER_DEBUG=true
+```
 
-# Dashboard
+### Dashboard Configuration
+```bash
 VITE_API_URL=http://localhost:4000
 ```
 
@@ -150,7 +172,7 @@ VITE_API_URL=http://localhost:4000
 | `@flowtel/shared` | ✅ Complete | Types, DTOs, EventType enum, mock products |
 | `@flowtel/tracker` | ✅ Functional | init, track, HTTP send with retry, auto page views |
 | `@flowtel/shop` | ✅ Functional | Product list, detail (with tracking), cart (with tracking), checkout (checkout_started, purchase_completed events), order confirmation, tracker integration |
-| `@flowtel/backend` | ✅ Functional | Database, Event entity, Events/Stats/Insights/Chat controllers, CORS configuration |
+| `@flowtel/backend` | ✅ Functional | Database, Event entity, Events/Stats/Insights/Chat controllers, Environment configuration with validation, CORS configuration |
 | `@flowtel/dashboard` | 🟡 Partial | React Router routing, DashboardLayout with sidebar nav, Stats/Events/Insights/Chat pages, API client service, StatsOverview connected to backend, environment configuration |
 
 ### Dashboard Environment Configuration
@@ -225,8 +247,9 @@ The StatsModule provides statistics aggregation:
 7. ~~Create NestJS LLMModule~~ ✅ Done (TASK-85) - Global LLM module with OpenAI/Anthropic support
 8. ~~Create NestJS StatsModule~~ ✅ Done (TASK-82) - StatsAggregationService with EventsModule import
 9. ~~Add environment configuration to dashboard~~ ✅ Done (TASK-90)
-10. Build more dashboard UI components (charts, visualizations)
-11. Enhance AI insights generation
+10. ~~Add environment configuration to backend~~ ✅ Done (TASK-88) - ConfigModule with validation
+11. Build more dashboard UI components (charts, visualizations)
+12. Enhance AI insights generation
 
 ### Dashboard EventsPage Integration
 The EventsPage is fully integrated with the backend API:
@@ -253,12 +276,13 @@ config.apiKey        // VITE_API_KEY
 config.trackerDebug  // VITE_TRACKER_DEBUG === 'true'
 ```
 
-### Backend CORS Configuration
-CORS is configured in `packages/backend/src/main.ts`:
-- **Default origins**: localhost:3000 (shop), localhost:3001 (dashboard), localhost:5173 (Vite dev)
-- **Environment variable**: Set `CORS_ORIGINS` to override defaults (comma-separated list)
-- **Methods allowed**: GET, POST, PUT, DELETE, PATCH, OPTIONS
-- **Credentials**: Enabled
+### Backend Environment Configuration (TASK-88)
+The backend uses a centralized configuration module with validation:
+- `packages/backend/src/config/configuration.ts`: Typed config factory with ServerConfig, DatabaseConfig, LlmConfig interfaces
+- `packages/backend/src/config/env.validation.ts`: Environment validation using class-validator
+- Configuration is validated on startup - invalid values prevent app from starting
+- Uses ConfigService for type-safe access to configuration values
+- CORS origins configurable via `CORS_ORIGINS` environment variable
 
 ## Key Decisions
 
