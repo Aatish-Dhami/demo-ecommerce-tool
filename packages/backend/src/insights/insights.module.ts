@@ -3,10 +3,15 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { InsightEntity } from './entities/insight.entity';
 import { InsightRepository } from './infrastructure/insight.repository';
 import { InsightsService } from './insights.service';
+import { InsightGenerationService } from './application/insight-generation.service';
+import { StatsModule } from '../stats/stats.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([InsightEntity])],
-  providers: [InsightsService, InsightRepository],
-  exports: [InsightsService, InsightRepository],
+  imports: [
+    TypeOrmModule.forFeature([InsightEntity]),
+    StatsModule,
+  ],
+  providers: [InsightsService, InsightRepository, InsightGenerationService],
+  exports: [InsightsService, InsightRepository, InsightGenerationService],
 })
 export class InsightsModule {}
