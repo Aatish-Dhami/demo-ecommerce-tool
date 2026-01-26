@@ -21,4 +21,5 @@ export {
   ChatResponseDto,
   InsightGenerateRequestDto,
   PaginatedResponseDto,
+  StatsQueryDto,
 } from './types/api';
