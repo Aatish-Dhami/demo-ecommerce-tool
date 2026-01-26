@@ -32,6 +32,9 @@ export class LlmServiceError extends Error {
   }
 }
 
+const DEFAULT_MAX_RETRIES = 3;
+const INITIAL_RETRY_DELAY_MS = 1000;
+
 @Injectable()
 export class LlmService implements OnModuleInit {
   private readonly logger = new Logger(LlmService.name);
@@ -88,15 +91,127 @@ export class LlmService implements OnModuleInit {
     }
   }
 
+  private isRateLimitError(error: unknown): boolean {
+    if (error instanceof Error) {
+      const message = error.message.toLowerCase();
+      if (message.includes('rate_limit') || message.includes('rate limit')) {
+        return true;
+      }
+    }
+    // OpenAI SDK throws APIError with status 429
+    if (
+      typeof error === 'object' &&
+      error !== null &&
+      'status' in error &&
+      (error as { status: number }).status === 429
+    ) {
+      return true;
+    }
+    // Anthropic SDK has error.error.type === 'rate_limit_error'
+    if (
+      typeof error === 'object' &&
+      error !== null &&
+      'error' in error &&
+      typeof (error as { error: unknown }).error === 'object' &&
+      (error as { error: { type?: string } }).error?.type === 'rate_limit_error'
+    ) {
+      return true;
+    }
+    return false;
+  }
+
+  private async withRetry<T>(
+    operation: () => Promise<T>,
+    maxRetries: number = DEFAULT_MAX_RETRIES,
+  ): Promise<T> {
+    let lastError: unknown;
+
+    for (let attempt = 0; attempt <= maxRetries; attempt++) {
+      try {
+        return await operation();
+      } catch (error) {
+        lastError = error;
+
+        if (!this.isRateLimitError(error) || attempt === maxRetries) {
+          throw error;
+        }
+
+        const delayMs = INITIAL_RETRY_DELAY_MS * Math.pow(2, attempt);
+        this.logger.warn(
+          `Rate limit hit, retrying in ${delayMs}ms (attempt ${attempt + 1}/${maxRetries})`,
+        );
+        await this.sleep(delayMs);
+      }
+    }
+
+    throw lastError;
+  }
+
+  private sleep(ms: number): Promise<void> {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  async generateCompletion(prompt: string): Promise<string> {
+    this.logger.log('Generating completion...');
+
+    try {
+      const response = await this.withRetry(() =>
+        this.config.provider === 'openai'
+          ? this.completionWithOpenAI(prompt)
+          : this.completionWithAnthropic(prompt),
+      );
+
+      return response;
+    } catch (error) {
+      this.logger.error('Failed to generate completion', error);
+      throw new LlmServiceError('Failed to generate completion', error);
+    }
+  }
+
+  private async completionWithOpenAI(prompt: string): Promise<string> {
+    if (!this.openaiClient) {
+      throw new LlmServiceError('OpenAI client not initialized');
+    }
+
+    const response = await this.openaiClient.chat.completions.create({
+      model: this.config.model,
+      messages: [{ role: 'user', content: prompt }],
+      max_tokens: this.config.maxTokens,
+      temperature: this.config.temperature,
+    });
+
+    return response.choices[0]?.message?.content ?? '';
+  }
+
+  private async completionWithAnthropic(prompt: string): Promise<string> {
+    if (!this.anthropicClient) {
+      throw new LlmServiceError('Anthropic client not initialized');
+    }
+
+    const response = await this.anthropicClient.messages.create({
+      model: this.config.model,
+      max_tokens: this.config.maxTokens,
+      messages: [{ role: 'user', content: prompt }],
+    });
+
+    const textBlock = response.content.find((block) => block.type === 'text');
+    if (!textBlock || textBlock.type !== 'text') {
+      throw new LlmServiceError('Empty response from Anthropic');
+    }
+
+    return textBlock.text;
+  }
+
   async generateInsight(stats: Stats): Promise<Insight[]> {
     this.logger.log('Generating insights from stats...');
 
     try {
       const prompt = this.buildInsightPrompt(stats);
-      const generatedInsights =
+      const generatedInsights = await this.withRetry(() =>
         this.config.provider === 'openai'
-          ? await this.generateWithOpenAI(prompt)
-          : await this.generateWithAnthropic(prompt);
+          ? this.generateWithOpenAI(prompt)
+          : this.generateWithAnthropic(prompt),
+      );
 
       const insights = generatedInsights.map((generated) =>
         this.toInsight(generated),
@@ -235,10 +350,11 @@ Focus on actionable insights that help improve business outcomes. Respond only w
     this.logger.log('Processing chat request...');
 
     try {
-      const response =
+      const response = await this.withRetry(() =>
         this.config.provider === 'openai'
-          ? await this.chatWithOpenAI(systemPrompt, userMessage)
-          : await this.chatWithAnthropic(systemPrompt, userMessage);
+          ? this.chatWithOpenAI(systemPrompt, userMessage)
+          : this.chatWithAnthropic(systemPrompt, userMessage),
+      );
 
       return response;
     } catch (error) {
