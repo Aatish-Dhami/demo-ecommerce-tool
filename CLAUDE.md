@@ -218,6 +218,18 @@ The shop uses a vite alias to import tracker source directly:
 - `tsconfig.json`: Path mapping for TypeScript resolution
 - `CartContext.tsx`: Tracks `add_to_cart` and `remove_from_cart` events
 
+### Shop Configuration
+The shop uses a centralized config module at `packages/shop/src/config.ts`:
+```typescript
+import { config } from './config';
+
+// Available properties:
+config.apiUrl        // VITE_API_URL (default: 'http://localhost:4000')
+config.shopId        // VITE_SHOP_ID
+config.apiKey        // VITE_API_KEY
+config.trackerDebug  // VITE_TRACKER_DEBUG === 'true'
+```
+
 ### Backend CORS Configuration
 CORS is configured in `packages/backend/src/main.ts`:
 - **Default origins**: localhost:3000 (shop), localhost:3001 (dashboard), localhost:5173 (Vite dev)
