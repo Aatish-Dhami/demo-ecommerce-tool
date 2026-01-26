@@ -131,6 +131,7 @@ pnpm lint             # Lint all packages
 DATABASE_URL=sqlite:./data.db
 OPENAI_API_KEY=sk-...
 PORT=4000
+CORS_ORIGINS=http://localhost:3000,http://localhost:3001,http://localhost:5173  # Comma-separated, optional
 
 # Shop
 VITE_API_URL=http://localhost:4000
@@ -149,8 +150,8 @@ VITE_API_URL=http://localhost:4000
 | `@flowtel/shared` | ✅ Complete | Types, DTOs, EventType enum, mock products |
 | `@flowtel/tracker` | ✅ Functional | init, track, HTTP send with retry, auto page views |
 | `@flowtel/shop` | ✅ Functional | Product list, detail (with tracking), cart (with tracking), checkout (checkout_started, purchase_completed events), order confirmation, tracker integration |
-| `@flowtel/backend` | ✅ Functional | Database, Event entity, Events/Stats/Insights/Chat controllers |
-| `@flowtel/dashboard` | 🟡 Partial | Basic React app, API client service, Stats/Events/Insights/Chat UI, StatsOverview connected to backend |
+| `@flowtel/backend` | ✅ Functional | Database, Event entity, Events/Stats/Insights/Chat controllers, CORS configuration |
+| `@flowtel/dashboard` | 🟡 Partial | React Router routing, DashboardLayout with sidebar nav, Stats/Events/Insights/Chat pages, API client service, StatsOverview connected to backend |
 
 ### Dashboard API Client
 
@@ -185,14 +186,23 @@ The shop tracks the following events:
 - `checkout_started` - Checkout page view
 - `purchase_completed` - Order confirmation
 
+### Dashboard Routing (TASK-79)
+The dashboard uses React Router for client-side routing:
+- `/` → StatsPage (wraps StatsOverview)
+- `/events` → EventsPage
+- `/insights` → InsightsPage
+- `/chat` → ChatPage
+- All routes wrapped with DashboardLayout (sidebar navigation with Outlet)
+
 ### Next Steps
 1. ~~Integrate tracker into shop~~ ✅ Done (TASK-68, TASK-71)
 2. ~~Add tracking to ProductList~~ ✅ Done (TASK-69)
 3. ~~Connect StatsOverview to backend~~ ✅ Done (TASK-74)
 4. ~~Connect EventsPage to backend API~~ ✅ Done (TASK-75)
-5. ~~Create NestJS ChatModule~~ ✅ Done (TASK-84) - ChatModule with ChatService and ChatController fully implemented
-6. Build more dashboard UI components (charts, visualizations)
-7. Enhance AI insights generation
+5. ~~Configure dashboard routing~~ ✅ Done (TASK-79)
+6. ~~Create NestJS ChatModule~~ ✅ Done (TASK-84) - ChatModule with ChatService and ChatController fully implemented
+7. Build more dashboard UI components (charts, visualizations)
+8. Enhance AI insights generation
 
 ### Dashboard EventsPage Integration
 The EventsPage is fully integrated with the backend API:
@@ -206,6 +216,13 @@ The shop uses a vite alias to import tracker source directly:
 - `vite.config.ts`: Alias `@flowtel/tracker` to `../tracker/src/index.ts`
 - `tsconfig.json`: Path mapping for TypeScript resolution
 - `CartContext.tsx`: Tracks `add_to_cart` and `remove_from_cart` events
+
+### Backend CORS Configuration
+CORS is configured in `packages/backend/src/main.ts`:
+- **Default origins**: localhost:3000 (shop), localhost:3001 (dashboard), localhost:5173 (Vite dev)
+- **Environment variable**: Set `CORS_ORIGINS` to override defaults (comma-separated list)
+- **Methods allowed**: GET, POST, PUT, DELETE, PATCH, OPTIONS
+- **Credentials**: Enabled
 
 ## Key Decisions
 
