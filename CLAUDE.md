@@ -151,7 +151,19 @@ VITE_API_URL=http://localhost:4000
 | `@flowtel/tracker` | ✅ Functional | init, track, HTTP send with retry, auto page views |
 | `@flowtel/shop` | ✅ Functional | Product list, detail (with tracking), cart (with tracking), checkout (checkout_started, purchase_completed events), order confirmation, tracker integration |
 | `@flowtel/backend` | ✅ Functional | Database, Event entity, Events/Stats/Insights/Chat controllers, CORS configuration |
-| `@flowtel/dashboard` | 🟡 Partial | Basic React app, API client service, Stats/Events/Insights/Chat UI, StatsOverview connected to backend |
+| `@flowtel/dashboard` | 🟡 Partial | Basic React app, API client service, Stats/Events/Insights/Chat UI, StatsOverview connected to backend, environment configuration |
+
+### Dashboard Environment Configuration
+The dashboard uses type-safe environment configuration:
+- `packages/dashboard/.env.example`: Template for environment variables
+- `packages/dashboard/src/config.ts`: Centralized config module with type-safe access
+
+```typescript
+import { config } from './config';
+
+// Available config properties:
+config.apiUrl  // string - API endpoint URL (default: http://localhost:4000)
+```
 
 ### Dashboard API Client
 
@@ -191,8 +203,9 @@ The shop tracks the following events:
 2. ~~Add tracking to ProductList~~ ✅ Done (TASK-69)
 3. ~~Connect StatsOverview to backend~~ ✅ Done (TASK-74)
 4. ~~Connect EventsPage to backend API~~ ✅ Done (TASK-75)
-5. Build more dashboard UI components (charts, visualizations)
-6. Enhance AI insights generation
+5. ~~Add environment configuration to dashboard~~ ✅ Done (TASK-90)
+6. Build more dashboard UI components (charts, visualizations)
+7. Enhance AI insights generation
 
 ### Dashboard EventsPage Integration
 The EventsPage is fully integrated with the backend API:
