@@ -194,6 +194,15 @@ The dashboard uses React Router for client-side routing:
 - `/chat` → ChatPage
 - All routes wrapped with DashboardLayout (sidebar navigation with Outlet)
 
+### Backend StatsModule (TASK-82)
+The StatsModule provides statistics aggregation:
+- **File**: `packages/backend/src/stats/stats.module.ts`
+- **Service**: `StatsAggregationService` (stats-aggregation.service.ts)
+- **Controller**: `StatsController` at `/api/stats`
+- **Imports**: `EventsModule`, `TypeOrmModule.forFeature([Event])`
+- **Exports**: `StatsAggregationService` for use by InsightsModule and ChatModule
+- **Methods**: `getStats(query)` returns aggregated stats (totalEvents, revenue, conversion rate, top products)
+
 ### Next Steps
 1. ~~Integrate tracker into shop~~ ✅ Done (TASK-68, TASK-71)
 2. ~~Add tracking to ProductList~~ ✅ Done (TASK-69)
@@ -201,8 +210,9 @@ The dashboard uses React Router for client-side routing:
 4. ~~Connect EventsPage to backend API~~ ✅ Done (TASK-75)
 5. ~~Configure dashboard routing~~ ✅ Done (TASK-79)
 6. ~~Create NestJS LLMModule~~ ✅ Done (TASK-85) - Global LLM module with OpenAI/Anthropic support
-7. Build more dashboard UI components (charts, visualizations)
-8. Enhance AI insights generation
+7. ~~Create NestJS StatsModule~~ ✅ Done (TASK-82) - StatsAggregationService with EventsModule import
+8. Build more dashboard UI components (charts, visualizations)
+9. Enhance AI insights generation
 
 ### Dashboard EventsPage Integration
 The EventsPage is fully integrated with the backend API:
