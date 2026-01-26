@@ -230,4 +230,64 @@ Focus on actionable insights that help improve business outcomes. Respond only w
       metadata: generated.metadata,
     };
   }
+
+  async chat(systemPrompt: string, userMessage: string): Promise<string> {
+    this.logger.log('Processing chat request...');
+
+    try {
+      const response =
+        this.config.provider === 'openai'
+          ? await this.chatWithOpenAI(systemPrompt, userMessage)
+          : await this.chatWithAnthropic(systemPrompt, userMessage);
+
+      return response;
+    } catch (error) {
+      this.logger.error('Failed to process chat request', error);
+      throw new LlmServiceError('Failed to process chat request', error);
+    }
+  }
+
+  private async chatWithOpenAI(
+    systemPrompt: string,
+    userMessage: string,
+  ): Promise<string> {
+    if (!this.openaiClient) {
+      throw new LlmServiceError('OpenAI client not initialized');
+    }
+
+    const response = await this.openaiClient.chat.completions.create({
+      model: this.config.model,
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userMessage },
+      ],
+      max_tokens: this.config.maxTokens,
+      temperature: 0.3,
+    });
+
+    return response.choices[0]?.message?.content ?? '';
+  }
+
+  private async chatWithAnthropic(
+    systemPrompt: string,
+    userMessage: string,
+  ): Promise<string> {
+    if (!this.anthropicClient) {
+      throw new LlmServiceError('Anthropic client not initialized');
+    }
+
+    const response = await this.anthropicClient.messages.create({
+      model: this.config.model,
+      max_tokens: this.config.maxTokens,
+      system: systemPrompt,
+      messages: [{ role: 'user', content: userMessage }],
+    });
+
+    const textBlock = response.content.find((block) => block.type === 'text');
+    if (!textBlock || textBlock.type !== 'text') {
+      throw new LlmServiceError('Empty response from Anthropic');
+    }
+
+    return textBlock.text;
+  }
 }

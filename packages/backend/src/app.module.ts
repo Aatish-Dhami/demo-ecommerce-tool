@@ -5,6 +5,7 @@ import { EventsModule } from './events/events.module';
 import { InsightsModule } from './insights/insights.module';
 import { LlmModule } from './llm/llm.module';
 import { StatsModule } from './stats/stats.module';
+import { ChatModule } from './chat/chat.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { StatsModule } from './stats/stats.module';
     InsightsModule,
     LlmModule,
     StatsModule,
+    ChatModule,
   ],
   controllers: [],
   providers: [],
