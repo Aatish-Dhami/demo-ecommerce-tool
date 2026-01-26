@@ -190,8 +190,9 @@ The shop tracks the following events:
 2. ~~Add tracking to ProductList~~ ✅ Done (TASK-69)
 3. ~~Connect StatsOverview to backend~~ ✅ Done (TASK-74)
 4. ~~Connect EventsPage to backend API~~ ✅ Done (TASK-75)
-5. Build more dashboard UI components (charts, visualizations)
-6. Enhance AI insights generation
+5. ~~Create NestJS ChatModule~~ ✅ Done (TASK-84) - ChatModule with ChatService and ChatController fully implemented
+6. Build more dashboard UI components (charts, visualizations)
+7. Enhance AI insights generation
 
 ### Dashboard EventsPage Integration
 The EventsPage is fully integrated with the backend API:
