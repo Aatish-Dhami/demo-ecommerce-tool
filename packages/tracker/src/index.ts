@@ -13,7 +13,7 @@
  */
 
 import type { CreateEventDto, TrackerConfig } from '@flowtel/shared';
-import { sendEvents } from './sender';
+import { EventBatcher } from './batcher';
 import {
   setupPageViewTracking,
   teardownPageViewTracking,
@@ -42,12 +42,14 @@ interface TrackerState {
   initialized: boolean;
   config: TrackerConfig | null;
   sessionId: string | null;
+  batcher: EventBatcher | null;
 }
 
 const state: TrackerState = {
   initialized: false,
   config: null,
   sessionId: null,
+  batcher: null,
 };
 
 /**
@@ -89,6 +91,18 @@ export function init(config: TrackerConfig): void {
   };
 
   state.sessionId = generateId();
+
+  // Initialize batcher for event batching
+  state.batcher = new EventBatcher({
+    batchSize: state.config.batchSize!,
+    flushInterval: state.config.flushInterval!,
+    senderConfig: {
+      endpoint: state.config.endpoint,
+      debug: state.config.debug,
+    },
+    debug: state.config.debug,
+  });
+
   state.initialized = true;
 
   if (state.config.debug) {
@@ -107,11 +121,11 @@ export function init(config: TrackerConfig): void {
  * @param eventName - Name/type of event (e.g., 'page_view', 'add_to_cart')
  * @param properties - Event-specific data
  */
-export async function track(
+export function track(
   eventName: string,
   properties: Record<string, unknown> = {}
-): Promise<void> {
-  if (!state.initialized || !state.config || !state.sessionId) {
+): void {
+  if (!state.initialized || !state.config || !state.sessionId || !state.batcher) {
     console.warn('[Flowtel Tracker] Not initialized. Call tracker.init() first.');
     return;
   }
@@ -131,15 +145,8 @@ export async function track(
     console.log('[Flowtel Tracker] Track event:', event);
   }
 
-  // Send immediately (batching will be added in a future task)
-  const result = await sendEvents([event], {
-    endpoint: state.config.endpoint,
-    debug: state.config.debug,
-  });
-
-  if (!result.success && state.config.debug) {
-    console.warn('[Flowtel Tracker] Failed to send event:', result.error);
-  }
+  // Add to batcher for batched sending
+  state.batcher.add(event);
 }
 
 /**
@@ -179,6 +186,18 @@ export function trackPageView(): void {
 }
 
 /**
+ * Manually flush all queued events.
+ * Useful before navigation or when immediate delivery is needed.
+ */
+export async function flush(): Promise<void> {
+  if (!state.batcher) {
+    console.warn('[Flowtel Tracker] Not initialized. Call tracker.init() first.');
+    return;
+  }
+  await state.batcher.flush();
+}
+
+/**
  * Destroy the tracker and cleanup resources
  */
 export function destroy(): void {
@@ -186,6 +205,13 @@ export function destroy(): void {
     return;
   }
   teardownPageViewTracking();
+
+  // Flush and destroy batcher
+  if (state.batcher) {
+    state.batcher.destroy();
+    state.batcher = null;
+  }
+
   state.initialized = false;
   state.config = null;
   state.sessionId = null;
@@ -196,6 +222,7 @@ export default {
   init,
   track,
   trackPageView,
+  flush,
   getConfig,
   isInitialized,
   getSessionId,
