@@ -14,6 +14,11 @@
 
 import type { CreateEventDto, TrackerConfig } from '@flowtel/shared';
 import { sendEvents } from './sender';
+import {
+  setupPageViewTracking,
+  teardownPageViewTracking,
+  trackPageView as trackPageViewFn,
+} from './pageview';
 
 /**
  * Generate a unique ID using crypto.randomUUID with fallback for older browsers
@@ -79,6 +84,7 @@ export function init(config: TrackerConfig): void {
     batchSize: 10,
     flushInterval: 5000,
     debug: false,
+    autoTrackPageViews: true,
     ...config,
   };
 
@@ -88,6 +94,11 @@ export function init(config: TrackerConfig): void {
   if (state.config.debug) {
     console.log('[Flowtel Tracker] Initialized with config:', state.config);
     console.log('[Flowtel Tracker] Session ID:', state.sessionId);
+  }
+
+  // Setup automatic page view tracking if enabled
+  if (state.config.autoTrackPageViews) {
+    setupPageViewTracking(track, state.config.debug);
   }
 }
 
@@ -155,11 +166,38 @@ export function getSessionId(): string | null {
   return state.sessionId;
 }
 
+/**
+ * Manually track a page view
+ * Useful when autoTrackPageViews is disabled or for custom routing scenarios
+ */
+export function trackPageView(): void {
+  if (!state.initialized || !state.config) {
+    console.warn('[Flowtel Tracker] Not initialized. Call tracker.init() first.');
+    return;
+  }
+  trackPageViewFn(track);
+}
+
+/**
+ * Destroy the tracker and cleanup resources
+ */
+export function destroy(): void {
+  if (!state.initialized) {
+    return;
+  }
+  teardownPageViewTracking();
+  state.initialized = false;
+  state.config = null;
+  state.sessionId = null;
+}
+
 // Export as default object for IIFE global assignment
 export default {
   init,
   track,
+  trackPageView,
   getConfig,
   isInitialized,
   getSessionId,
+  destroy,
 };
