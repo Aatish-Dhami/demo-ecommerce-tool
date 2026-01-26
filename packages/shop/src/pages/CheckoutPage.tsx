@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../hooks/useCart';
-import { track, EventType } from '../lib/tracker';
+import { track, flush, EventType } from '../lib/tracker';
 import './CheckoutPage.css';
 
 export function CheckoutPage() {
@@ -11,14 +11,20 @@ export function CheckoutPage() {
 
   useEffect(() => {
     if (cart.items.length > 0 && !hasTrackedCheckout.current) {
+      const totalQuantity = cart.items.reduce(
+        (sum, item) => sum + item.quantity,
+        0
+      );
+
       track(EventType.CHECKOUT_STARTED, {
         cartTotal: cart.total,
         itemCount: cart.items.length,
+        totalQuantity,
         items: cart.items.map((item) => ({
           productId: item.productId,
-          name: item.productName,
-          quantity: item.quantity,
+          productName: item.productName,
           price: item.price,
+          quantity: item.quantity,
         })),
       });
       hasTrackedCheckout.current = true;
@@ -32,20 +38,24 @@ export function CheckoutPage() {
     }).format(price);
   };
 
-  const handlePlaceOrder = () => {
-    const orderId = `ord-${Date.now()}`;
-
-    track(EventType.PURCHASE_COMPLETED, {
-      orderId,
+  const handlePlaceOrder = async () => {
+    const orderData = {
+      orderId: `ord-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`,
       total: cart.total,
       itemCount: cart.items.length,
+      totalQuantity: cart.items.reduce((sum, item) => sum + item.quantity, 0),
+      currency: 'USD',
       items: cart.items.map((item) => ({
         productId: item.productId,
-        name: item.productName,
-        quantity: item.quantity,
+        productName: item.productName,
         price: item.price,
+        quantity: item.quantity,
+        subtotal: item.price * item.quantity,
       })),
-    });
+    };
+
+    track(EventType.PURCHASE_COMPLETED, orderData);
+    await flush();
 
     clearCart();
     navigate('/confirmation');

@@ -148,7 +148,7 @@ VITE_API_URL=http://localhost:4000
 |---------|--------|-------------|
 | `@flowtel/shared` | ✅ Complete | Types, DTOs, EventType enum, mock products |
 | `@flowtel/tracker` | ✅ Functional | init, track, HTTP send with retry, auto page views |
-| `@flowtel/shop` | ✅ Functional | Product list, detail, cart, checkout, order confirmation, tracker integration |
+| `@flowtel/shop` | ✅ Functional | Product list, detail, cart, checkout, order confirmation, tracker integration, checkout tracking (checkout_started, purchase_completed events) |
 | `@flowtel/backend` | 🟡 Partial | Database, Event entity, Events service (needs controller) |
 | `@flowtel/dashboard` | ⏳ Scaffold | Basic React app only |
 
