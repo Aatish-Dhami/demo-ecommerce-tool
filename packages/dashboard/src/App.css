@@ -1,37 +1,11 @@
-.app {
-  min-height: 100vh;
-  background-color: #f3f4f6;
+/* Global styles - layout styles moved to DashboardLayout */
+* {
+  box-sizing: border-box;
 }
 
-.app__header {
-  background: #ffffff;
-  border-bottom: 1px solid #e5e7eb;
-  padding: 1rem 2rem;
-}
-
-.app__title {
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: #1f2937;
+body {
   margin: 0;
-}
-
-.app__main {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 2rem;
-}
-
-@media (max-width: 768px) {
-  .app__header {
-    padding: 1rem;
-  }
-
-  .app__title {
-    font-size: 1.25rem;
-  }
-
-  .app__main {
-    padding: 1rem;
-  }
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }

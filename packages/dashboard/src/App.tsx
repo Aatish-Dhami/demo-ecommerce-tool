@@ -1,16 +1,20 @@
-import { EventList } from './components/EventList';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { DashboardLayout } from './components/DashboardLayout';
+import { StatsPage, EventsPage, InsightsPage, ChatPage } from './pages';
 import './App.css';
 
 function App() {
   return (
-    <div className="app">
-      <header className="app__header">
-        <h1 className="app__title">Flowtel Analytics Dashboard</h1>
-      </header>
-      <main className="app__main">
-        <EventList />
-      </main>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<DashboardLayout />}>
+          <Route index element={<StatsPage />} />
+          <Route path="events" element={<EventsPage />} />
+          <Route path="insights" element={<InsightsPage />} />
+          <Route path="chat" element={<ChatPage />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   );
 }
 

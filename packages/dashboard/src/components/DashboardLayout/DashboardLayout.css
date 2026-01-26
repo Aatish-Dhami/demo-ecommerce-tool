@@ -1,0 +1,153 @@
+.dashboard-layout {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f3f4f6;
+}
+
+.dashboard-layout__sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 240px;
+  height: 100vh;
+  background-color: #1f2937;
+  display: flex;
+  flex-direction: column;
+  z-index: 100;
+  transition: transform 0.3s ease;
+}
+
+.dashboard-layout__logo {
+  padding: 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.dashboard-layout__logo-text {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.dashboard-layout__nav {
+  flex: 1;
+  padding: 1rem 0;
+  overflow-y: auto;
+}
+
+.dashboard-layout__nav-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.dashboard-layout__nav-item {
+  margin: 0;
+}
+
+.dashboard-layout__nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.875rem 1.5rem;
+  color: #9ca3af;
+  text-decoration: none;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.dashboard-layout__nav-link:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: #ffffff;
+}
+
+.dashboard-layout__nav-link--active {
+  background-color: #3b82f6;
+  color: #ffffff;
+}
+
+.dashboard-layout__nav-link--active:hover {
+  background-color: #2563eb;
+}
+
+.dashboard-layout__nav-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.dashboard-layout__nav-label {
+  white-space: nowrap;
+}
+
+.dashboard-layout__content {
+  flex: 1;
+  margin-left: 240px;
+  padding: 2rem;
+  max-width: calc(100% - 240px);
+}
+
+.dashboard-layout__mobile-toggle {
+  display: none;
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 200;
+  width: 44px;
+  height: 44px;
+  background-color: #1f2937;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease;
+}
+
+.dashboard-layout__mobile-toggle:hover {
+  background-color: #374151;
+}
+
+.dashboard-layout__overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 90;
+}
+
+@media (max-width: 768px) {
+  .dashboard-layout__sidebar {
+    transform: translateX(-100%);
+  }
+
+  .dashboard-layout__sidebar--open {
+    transform: translateX(0);
+  }
+
+  .dashboard-layout__content {
+    margin-left: 0;
+    max-width: 100%;
+    padding: 5rem 1rem 1rem;
+  }
+
+  .dashboard-layout__mobile-toggle {
+    display: flex;
+  }
+
+  .dashboard-layout__overlay {
+    display: block;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard-layout__content {
+    padding: 4.5rem 0.75rem 0.75rem;
+  }
+}
