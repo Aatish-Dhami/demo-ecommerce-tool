@@ -7,6 +7,7 @@ export interface CartContextValue {
   cart: Cart;
   addToCart: (item: Omit<CartItem, 'quantity'>) => void;
   removeFromCart: (productId: string) => void;
+  removeItem: (productId: string) => void;
   clearCart: () => void;
   getTotal: () => number;
 }
@@ -102,6 +103,16 @@ export function CartProvider({ children }: CartProviderProps) {
     });
   }, []);
 
+  const removeItem = useCallback((productId: string) => {
+    setCart((prev) => {
+      const newItems = prev.items.filter((i) => i.productId !== productId);
+      return {
+        items: newItems,
+        total: calculateTotal(newItems),
+      };
+    });
+  }, []);
+
   const clearCart = useCallback(() => {
     setCart(defaultCart);
   }, []);
@@ -111,7 +122,7 @@ export function CartProvider({ children }: CartProviderProps) {
   }, [cart.total]);
 
   return (
-    <CartContext.Provider value={{ cart, addToCart, removeFromCart, clearCart, getTotal }}>
+    <CartContext.Provider value={{ cart, addToCart, removeFromCart, removeItem, clearCart, getTotal }}>
       {children}
     </CartContext.Provider>
   );
