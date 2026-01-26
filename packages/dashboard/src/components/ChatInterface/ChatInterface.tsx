@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
-import { ChatRequestDto, ChatResponseDto, ChatSource } from '@flowtel/shared';
+import { ChatSource } from '@flowtel/shared';
+import { apiService } from '../../services/api';
 import './ChatInterface.css';
 
 interface Message {
@@ -9,8 +10,6 @@ interface Message {
   timestamp: Date;
   sources?: ChatSource[];
 }
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
 function generateId(): string {
   return `msg-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
@@ -51,24 +50,10 @@ export function ChatInterface() {
     setIsLoading(true);
 
     try {
-      const requestBody: ChatRequestDto = {
+      const data = await apiService.sendChatMessage({
         message: trimmedInput,
         conversationId,
-      };
-
-      const response = await fetch(`${API_URL}/api/chat`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(requestBody),
       });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data: ChatResponseDto = await response.json();
 
       const assistantMessage: Message = {
         id: generateId(),
