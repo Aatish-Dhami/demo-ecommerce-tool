@@ -151,7 +151,7 @@ VITE_API_URL=http://localhost:4000
 | `@flowtel/tracker` | ✅ Functional | init, track, HTTP send with retry, auto page views |
 | `@flowtel/shop` | ✅ Functional | Product list, detail (with tracking), cart (with tracking), checkout (checkout_started, purchase_completed events), order confirmation, tracker integration |
 | `@flowtel/backend` | ✅ Functional | Database, Event entity, Events/Stats/Insights/Chat controllers, CORS configuration |
-| `@flowtel/dashboard` | 🟡 Partial | Basic React app, API client service, Stats/Events/Insights/Chat UI, StatsOverview connected to backend, environment configuration |
+| `@flowtel/dashboard` | 🟡 Partial | React Router routing, DashboardLayout with sidebar nav, Stats/Events/Insights/Chat pages, API client service, StatsOverview connected to backend, environment configuration |
 
 ### Dashboard Environment Configuration
 The dashboard uses type-safe environment configuration:
@@ -198,14 +198,24 @@ The shop tracks the following events:
 - `checkout_started` - Checkout page view
 - `purchase_completed` - Order confirmation
 
+### Dashboard Routing (TASK-79)
+The dashboard uses React Router for client-side routing:
+- `/` → StatsPage (wraps StatsOverview)
+- `/events` → EventsPage
+- `/insights` → InsightsPage
+- `/chat` → ChatPage
+- All routes wrapped with DashboardLayout (sidebar navigation with Outlet)
+
 ### Next Steps
 1. ~~Integrate tracker into shop~~ ✅ Done (TASK-68, TASK-71)
 2. ~~Add tracking to ProductList~~ ✅ Done (TASK-69)
 3. ~~Connect StatsOverview to backend~~ ✅ Done (TASK-74)
 4. ~~Connect EventsPage to backend API~~ ✅ Done (TASK-75)
-5. ~~Add environment configuration to dashboard~~ ✅ Done (TASK-90)
-6. Build more dashboard UI components (charts, visualizations)
-7. Enhance AI insights generation
+5. ~~Configure dashboard routing~~ ✅ Done (TASK-79)
+6. ~~Create NestJS LLMModule~~ ✅ Done (TASK-85) - Global LLM module with OpenAI/Anthropic support
+7. ~~Add environment configuration to dashboard~~ ✅ Done (TASK-90)
+8. Build more dashboard UI components (charts, visualizations)
+9. Enhance AI insights generation
 
 ### Dashboard EventsPage Integration
 The EventsPage is fully integrated with the backend API:
