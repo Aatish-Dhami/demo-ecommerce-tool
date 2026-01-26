@@ -151,7 +151,19 @@ VITE_API_URL=http://localhost:4000
 | `@flowtel/tracker` | ✅ Functional | init, track, HTTP send with retry, auto page views |
 | `@flowtel/shop` | ✅ Functional | Product list, detail (with tracking), cart (with tracking), checkout (checkout_started, purchase_completed events), order confirmation, tracker integration |
 | `@flowtel/backend` | ✅ Functional | Database, Event entity, Events/Stats/Insights/Chat controllers, CORS configuration |
-| `@flowtel/dashboard` | 🟡 Partial | React Router routing, DashboardLayout with sidebar nav, Stats/Events/Insights/Chat pages, API client service, StatsOverview connected to backend |
+| `@flowtel/dashboard` | 🟡 Partial | React Router routing, DashboardLayout with sidebar nav, Stats/Events/Insights/Chat pages, API client service, StatsOverview connected to backend, environment configuration |
+
+### Dashboard Environment Configuration
+The dashboard uses type-safe environment configuration:
+- `packages/dashboard/.env.example`: Template for environment variables
+- `packages/dashboard/src/config.ts`: Centralized config module with type-safe access
+
+```typescript
+import { config } from './config';
+
+// Available config properties:
+config.apiUrl  // string - API endpoint URL (default: http://localhost:4000)
+```
 
 ### Dashboard API Client
 
@@ -202,8 +214,9 @@ The dashboard uses React Router for client-side routing:
 5. ~~Configure dashboard routing~~ ✅ Done (TASK-79)
 6. ~~Create NestJS ChatModule~~ ✅ Done (TASK-84) - ChatModule with ChatService and ChatController fully implemented
 7. ~~Create NestJS LLMModule~~ ✅ Done (TASK-85) - Global LLM module with OpenAI/Anthropic support
-8. Build more dashboard UI components (charts, visualizations)
-9. Enhance AI insights generation
+8. ~~Add environment configuration to dashboard~~ ✅ Done (TASK-90)
+9. Build more dashboard UI components (charts, visualizations)
+10. Enhance AI insights generation
 
 ### Dashboard EventsPage Integration
 The EventsPage is fully integrated with the backend API:
