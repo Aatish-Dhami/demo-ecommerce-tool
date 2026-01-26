@@ -1,5 +1,6 @@
 import { createContext, useCallback, useEffect, useState, ReactNode } from 'react';
-import { Cart, CartItem } from '@flowtel/shared';
+import { Cart, CartItem, EventType } from '@flowtel/shared';
+import { track } from '@flowtel/tracker';
 
 const CART_STORAGE_KEY = 'flowtel_cart';
 
@@ -81,6 +82,13 @@ export function CartProvider({ children }: CartProviderProps) {
         total: calculateTotal(newItems),
       };
     });
+
+    track(EventType.ADD_TO_CART, {
+      productId: item.productId,
+      name: item.productName,
+      price: item.price,
+      quantity: 1,
+    });
   }, []);
 
   const removeFromCart = useCallback((productId: string) => {
@@ -101,6 +109,10 @@ export function CartProvider({ children }: CartProviderProps) {
         items: newItems,
         total: calculateTotal(newItems),
       };
+    });
+
+    track(EventType.REMOVE_FROM_CART, {
+      productId,
     });
   }, []);
 
