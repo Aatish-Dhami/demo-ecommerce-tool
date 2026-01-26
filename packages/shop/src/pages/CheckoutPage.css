@@ -1,0 +1,122 @@
+.checkout-page {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.checkout-page__title {
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+.checkout-page__empty {
+  text-align: center;
+  padding: 3rem 0;
+}
+
+.checkout-page__empty p {
+  color: #6b7280;
+  margin-bottom: 1.5rem;
+}
+
+.checkout-page__link {
+  color: #646cff;
+  text-decoration: none;
+}
+
+.checkout-page__link:hover {
+  text-decoration: underline;
+}
+
+.checkout-page__content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.checkout-page__order-summary {
+  background-color: #f9fafb;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+}
+
+.checkout-page__order-summary h2 {
+  font-size: 1.25rem;
+  margin: 0 0 1rem 0;
+}
+
+.checkout-page__items {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.checkout-page__item {
+  display: flex;
+  justify-content: space-between;
+}
+
+.checkout-page__item-name {
+  color: #374151;
+}
+
+.checkout-page__item-price {
+  font-weight: 500;
+}
+
+.checkout-page__total {
+  display: flex;
+  justify-content: space-between;
+  font-size: 1.125rem;
+}
+
+.checkout-page__total-amount {
+  font-weight: 700;
+  font-size: 1.25rem;
+}
+
+.checkout-page__notice {
+  background-color: #fef3c7;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  text-align: center;
+}
+
+.checkout-page__notice p {
+  margin: 0;
+  color: #92400e;
+  font-size: 0.875rem;
+}
+
+.checkout-page__actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.checkout-page__back-link {
+  color: #646cff;
+  text-decoration: none;
+}
+
+.checkout-page__back-link:hover {
+  text-decoration: underline;
+}
+
+.checkout-page__place-order-button {
+  padding: 0.875rem 2rem;
+  background-color: #10b981;
+  border: none;
+  color: white;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.checkout-page__place-order-button:hover {
+  background-color: #059669;
+}

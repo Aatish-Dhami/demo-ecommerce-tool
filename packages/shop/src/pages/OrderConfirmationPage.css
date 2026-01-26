@@ -1,0 +1,57 @@
+.order-confirmation-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+}
+
+.order-confirmation-page__content {
+  text-align: center;
+  max-width: 500px;
+}
+
+.order-confirmation-page__icon {
+  width: 80px;
+  height: 80px;
+  background-color: #10b981;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  margin: 0 auto 1.5rem;
+}
+
+.order-confirmation-page__title {
+  font-size: 2rem;
+  margin: 0 0 1rem 0;
+  color: #111827;
+}
+
+.order-confirmation-page__message {
+  font-size: 1.125rem;
+  color: #374151;
+  margin: 0 0 0.5rem 0;
+}
+
+.order-confirmation-page__note {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin: 0 0 2rem 0;
+}
+
+.order-confirmation-page__link {
+  display: inline-block;
+  padding: 0.875rem 2rem;
+  background-color: #646cff;
+  color: white;
+  text-decoration: none;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.order-confirmation-page__link:hover {
+  background-color: #535bf2;
+}
