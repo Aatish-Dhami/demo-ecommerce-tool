@@ -12,7 +12,8 @@
  * </script>
  */
 
-import type { TrackingEvent, TrackerConfig } from '@flowtel/shared';
+import type { CreateEventDto, TrackerConfig } from '@flowtel/shared';
+import { sendEvents } from './sender';
 
 /**
  * Generate a unique ID using crypto.randomUUID with fallback for older browsers
@@ -43,6 +44,16 @@ const state: TrackerState = {
   config: null,
   sessionId: null,
 };
+
+/**
+ * Convert event type to human-readable event name
+ */
+function formatEventName(eventType: string): string {
+  return eventType
+    .split('_')
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ');
+}
 
 /**
  * Initialize the tracker with configuration
@@ -85,18 +96,20 @@ export function init(config: TrackerConfig): void {
  * @param eventName - Name/type of event (e.g., 'page_view', 'add_to_cart')
  * @param properties - Event-specific data
  */
-export function track(eventName: string, properties: Record<string, unknown> = {}): void {
+export async function track(
+  eventName: string,
+  properties: Record<string, unknown> = {}
+): Promise<void> {
   if (!state.initialized || !state.config || !state.sessionId) {
     console.warn('[Flowtel Tracker] Not initialized. Call tracker.init() first.');
     return;
   }
 
-  const event: TrackingEvent = {
-    id: generateId(),
+  const event: CreateEventDto = {
     shopId: state.config.shopId,
     sessionId: state.sessionId,
     eventType: eventName,
-    eventName: eventName,
+    eventName: formatEventName(eventName),
     properties,
     timestamp: new Date().toISOString(),
     url: typeof window !== 'undefined' ? window.location.href : '',
@@ -107,7 +120,15 @@ export function track(eventName: string, properties: Record<string, unknown> = {
     console.log('[Flowtel Tracker] Track event:', event);
   }
 
-  // Note: Event queuing, batching, and sending to backend will be implemented in TASK-24
+  // Send immediately (batching will be added in a future task)
+  const result = await sendEvents([event], {
+    endpoint: state.config.endpoint,
+    debug: state.config.debug,
+  });
+
+  if (!result.success && state.config.debug) {
+    console.warn('[Flowtel Tracker] Failed to send event:', result.error);
+  }
 }
 
 /**
