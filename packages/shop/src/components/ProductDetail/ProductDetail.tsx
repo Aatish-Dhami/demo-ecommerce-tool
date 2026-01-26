@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Product, products } from '@flowtel/shared';
+import { track, EventType } from '../../lib/tracker';
 import './ProductDetail.css';
 
 interface ProductDetailProps {
@@ -12,6 +13,17 @@ export function ProductDetail({ productId, onAddToCart, onBack }: ProductDetailP
   const [quantity, setQuantity] = useState(1);
 
   const product = products.find((p: Product) => p.id === productId);
+
+  // Track product_viewed on component mount
+  useEffect(() => {
+    if (product) {
+      track(EventType.PRODUCT_VIEWED, {
+        productId: product.id,
+        productName: product.name,
+        price: product.price,
+      });
+    }
+  }, [product]);
 
   if (!product) {
     return (
