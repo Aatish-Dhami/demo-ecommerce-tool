@@ -200,9 +200,10 @@ The dashboard uses React Router for client-side routing:
 3. ~~Connect StatsOverview to backend~~ ✅ Done (TASK-74)
 4. ~~Connect EventsPage to backend API~~ ✅ Done (TASK-75)
 5. ~~Configure dashboard routing~~ ✅ Done (TASK-79)
-6. ~~Create NestJS LLMModule~~ ✅ Done (TASK-85) - Global LLM module with OpenAI/Anthropic support
-7. Build more dashboard UI components (charts, visualizations)
-8. Enhance AI insights generation
+6. ~~Create NestJS ChatModule~~ ✅ Done (TASK-84) - ChatModule with ChatService and ChatController fully implemented
+7. ~~Create NestJS LLMModule~~ ✅ Done (TASK-85) - Global LLM module with OpenAI/Anthropic support
+8. Build more dashboard UI components (charts, visualizations)
+9. Enhance AI insights generation
 
 ### Dashboard EventsPage Integration
 The EventsPage is fully integrated with the backend API:
