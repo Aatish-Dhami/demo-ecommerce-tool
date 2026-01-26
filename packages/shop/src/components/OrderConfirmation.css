@@ -1,0 +1,85 @@
+.order-confirmation {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  padding: 2rem;
+  text-align: center;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.order-confirmation__icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: #059669;
+  color: white;
+  font-size: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.order-confirmation__title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 1rem 0;
+}
+
+.order-confirmation__message {
+  font-size: 1.125rem;
+  color: #6b7280;
+  margin: 0 0 2rem 0;
+  line-height: 1.6;
+}
+
+.order-confirmation__order-id {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1.5rem;
+  background: #f3f4f6;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+  width: 100%;
+}
+
+.order-confirmation__order-id-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.order-confirmation__order-id-value {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1f2937;
+  font-family: monospace;
+  word-break: break-all;
+}
+
+.order-confirmation__continue-button {
+  padding: 0.875rem 2rem;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.order-confirmation__continue-button:hover {
+  background: #2563eb;
+}
+
+.order-confirmation__continue-button:active {
+  background: #1d4ed8;
+}
