@@ -4,7 +4,7 @@ import { InsightEntity } from './entities/insight.entity';
 import { InsightRepository } from './infrastructure/insight.repository';
 import { InsightsService } from './insights.service';
 import { InsightGenerationService } from './application/insight-generation.service';
-import { InsightsController } from './presentation/insights.controller';
+import { InsightsController } from './insights.controller';
 import { StatsModule } from '../stats/stats.module';
 
 @Module({
