@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Stats, TopProduct, products } from '@flowtel/shared';
+import { Repository, SelectQueryBuilder } from 'typeorm';
+import { Stats, StatsQueryDto, TopProduct, products } from '@flowtel/shared';
 import { Event } from '../events/entities/event.entity';
 
 interface EventCountResult {
@@ -33,13 +33,13 @@ export class StatsService {
     this.productMap = new Map(products.map((p) => [p.id, p.name]));
   }
 
-  async getStats(shopId: string): Promise<Stats> {
+  async getStats(query: StatsQueryDto = {}): Promise<Stats> {
     const [eventCounts, revenueResult, topProductsResult, conversionData] =
       await Promise.all([
-        this.getEventCounts(shopId),
-        this.getTotalRevenue(shopId),
-        this.getTopProducts(shopId),
-        this.getConversionData(shopId),
+        this.getEventCounts(query),
+        this.getTotalRevenue(query),
+        this.getTopProducts(query),
+        this.getConversionData(query),
       ]);
 
     const countsMap = new Map<string, number>(
@@ -70,72 +70,100 @@ export class StatsService {
     };
   }
 
-  private async getEventCounts(shopId: string): Promise<EventCountResult[]> {
-    return this.eventRepository
-      .createQueryBuilder('event')
-      .select('event.eventType', 'eventType')
-      .addSelect('COUNT(*)', 'count')
-      .where('event.shopId = :shopId', { shopId })
-      .groupBy('event.eventType')
-      .getRawMany<EventCountResult>();
+  private applyFilters(
+    qb: SelectQueryBuilder<Event>,
+    query: StatsQueryDto,
+  ): SelectQueryBuilder<Event> {
+    if (query.shopId) {
+      qb.andWhere('event.shopId = :shopId', { shopId: query.shopId });
+    }
+    if (query.startDate) {
+      qb.andWhere('event.timestamp >= :startDate', {
+        startDate: query.startDate,
+      });
+    }
+    if (query.endDate) {
+      qb.andWhere('event.timestamp <= :endDate', { endDate: query.endDate });
+    }
+    return qb;
   }
 
-  private async getTotalRevenue(shopId: string): Promise<RevenueResult> {
-    const result = await this.eventRepository
+  private async getEventCounts(
+    query: StatsQueryDto,
+  ): Promise<EventCountResult[]> {
+    const qb = this.eventRepository
+      .createQueryBuilder('event')
+      .select('event.eventType', 'eventType')
+      .addSelect('COUNT(*)', 'count');
+
+    this.applyFilters(qb, query);
+
+    return qb.groupBy('event.eventType').getRawMany<EventCountResult>();
+  }
+
+  private async getTotalRevenue(query: StatsQueryDto): Promise<RevenueResult> {
+    const qb = this.eventRepository
       .createQueryBuilder('event')
       .select(
         "COALESCE(SUM(json_extract(event.properties, '$.revenue')), 0)",
         'totalRevenue',
       )
-      .where('event.shopId = :shopId', { shopId })
-      .andWhere('event.eventType = :eventType', {
+      .where('event.eventType = :eventType', {
         eventType: 'purchase_completed',
-      })
-      .getRawOne<RevenueResult>();
+      });
 
+    this.applyFilters(qb, query);
+
+    const result = await qb.getRawOne<RevenueResult>();
     return result || { totalRevenue: null };
   }
 
   private async getTopProducts(
-    shopId: string,
+    query: StatsQueryDto,
     limit: number = 10,
   ): Promise<ProductCountResult[]> {
-    return this.eventRepository
+    const qb = this.eventRepository
       .createQueryBuilder('event')
       .select("json_extract(event.properties, '$.productId')", 'productId')
       .addSelect('COUNT(*)', 'count')
-      .where('event.shopId = :shopId', { shopId })
-      .andWhere('event.eventType = :eventType', {
+      .where('event.eventType = :eventType', {
         eventType: 'product_viewed',
       })
-      .andWhere("json_extract(event.properties, '$.productId') IS NOT NULL")
+      .andWhere("json_extract(event.properties, '$.productId') IS NOT NULL");
+
+    this.applyFilters(qb, query);
+
+    return qb
       .groupBy("json_extract(event.properties, '$.productId')")
       .orderBy('count', 'DESC')
       .limit(limit)
       .getRawMany<ProductCountResult>();
   }
 
-  private async getConversionData(shopId: string): Promise<{
+  private async getConversionData(query: StatsQueryDto): Promise<{
     sessionsWithProductViews: number;
     sessionsWithPurchases: number;
   }> {
+    const productViewQb = this.eventRepository
+      .createQueryBuilder('event')
+      .select('COUNT(DISTINCT event.sessionId)', 'sessionCount')
+      .where('event.eventType = :eventType', {
+        eventType: 'product_viewed',
+      });
+
+    const purchaseQb = this.eventRepository
+      .createQueryBuilder('event')
+      .select('COUNT(DISTINCT event.sessionId)', 'sessionCount')
+      .where('event.eventType = :eventType', {
+        eventType: 'purchase_completed',
+      });
+
+    this.applyFilters(productViewQb, query);
+    this.applyFilters(purchaseQb, query);
+
     const [productViewSessions, purchaseSessions] = await Promise.all([
-      this.eventRepository
-        .createQueryBuilder('event')
-        .select('COUNT(DISTINCT event.sessionId)', 'sessionCount')
-        .where('event.shopId = :shopId', { shopId })
-        .andWhere('event.eventType = :eventType', {
-          eventType: 'product_viewed',
-        })
-        .getRawOne<SessionCountResult>(),
-      this.eventRepository
-        .createQueryBuilder('event')
-        .select('COUNT(DISTINCT event.sessionId)', 'sessionCount')
-        .where('event.shopId = :shopId', { shopId })
-        .andWhere('event.eventType = :eventType', {
-          eventType: 'purchase_completed',
-        })
-        .getRawOne<SessionCountResult>(),
+      productViewQb.getRawOne<SessionCountResult>(),
+      purchaseQb.getRawOne<SessionCountResult>(),
     ]);
 
     return {

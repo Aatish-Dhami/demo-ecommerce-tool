@@ -18,7 +18,7 @@ export class InsightGenerationService {
     this.logger.log(`Generating insights for shop: ${shopId}`);
 
     // 1. Fetch aggregated stats (AC: fetches recent events)
-    const stats = await this.statsService.getStats(shopId);
+    const stats = await this.statsService.getStats({ shopId });
 
     // 2. Generate insights via LLM (AC: build prompt + parse response)
     const insights = await this.llmService.generateInsight(stats);

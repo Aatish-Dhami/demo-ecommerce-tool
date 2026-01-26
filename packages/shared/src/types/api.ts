@@ -151,3 +151,18 @@ export interface PaginatedResponseDto<T> {
   /** Total number of pages */
   totalPages: number;
 }
+
+/**
+ * DTO for querying/filtering stats.
+ * Used for GET /api/stats endpoint.
+ */
+export interface StatsQueryDto {
+  /** Filter by shop ID */
+  shopId?: string;
+
+  /** Filter stats after this date (ISO 8601) */
+  startDate?: string;
+
+  /** Filter stats before this date (ISO 8601) */
+  endDate?: string;
+}

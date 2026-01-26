@@ -25,7 +25,7 @@ export class ChatService {
     const convId = conversationId || randomUUID();
 
     const [stats, eventsResult, insights] = await Promise.all([
-      this.statsService.getStats(shopId),
+      this.statsService.getStats({ shopId }),
       this.eventsService.findAll({ shopId, limit: 50 }),
       this.insightsService.findRecent(5),
     ]);
