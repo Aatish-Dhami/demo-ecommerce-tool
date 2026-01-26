@@ -1,4 +1,4 @@
-import { EventList } from './components/EventList';
+import { EventsPage } from './pages';
 import './App.css';
 
 function App() {
@@ -8,7 +8,7 @@ function App() {
         <h1 className="app__title">Flowtel Analytics Dashboard</h1>
       </header>
       <main className="app__main">
-        <EventList />
+        <EventsPage />
       </main>
     </div>
   );

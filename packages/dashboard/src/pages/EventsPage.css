@@ -1,0 +1,38 @@
+.events-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.events-page__header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.events-page__title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0;
+}
+
+.events-page__description {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .events-page {
+    gap: 1rem;
+  }
+
+  .events-page__title {
+    font-size: 1.25rem;
+  }
+
+  .events-page__description {
+    font-size: 0.8125rem;
+  }
+}
