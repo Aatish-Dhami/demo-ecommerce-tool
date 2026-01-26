@@ -7,7 +7,13 @@ Shared TypeScript types, constants, and mock data for the Flowtel analytics plat
 This package provides:
 - Type definitions shared across all packages
 - Event type enums for type-safe tracking
+- API DTOs for request/response contracts
 - Mock product data for the demo shop
+
+## Tech Stack
+
+- TypeScript 5.x
+- ESM module format (`"type": "module"`)
 
 ## Structure
 
@@ -15,6 +21,7 @@ This package provides:
 src/
 ├── index.ts              # Main barrel export
 ├── types/
+│   ├── api.ts            # API request/response DTOs
 │   ├── events.ts         # TrackingEvent interface
 │   ├── stats.ts          # Stats, TopProduct interfaces
 │   ├── insights.ts       # Insight, InsightType interfaces
@@ -24,7 +31,7 @@ src/
 ├── constants/
 │   └── eventTypes.ts     # EventType enum
 └── data/
-    └── products.ts       # Mock product catalog
+    └── products.ts       # Mock product catalog (8 items)
 ```
 
 ## Exports
@@ -36,6 +43,13 @@ src/
 - `Product` - Product catalog item
 - `Cart`, `CartItem` - Shopping cart structures
 - `TrackerConfig` - Configuration for tracker script initialization
+
+### API DTOs
+- `CreateEventDto` - Event ingestion request
+- `EventsQueryDto` - Event list query params
+- `PaginatedResponseDto<T>` - Paginated response wrapper
+- `ChatRequestDto`, `ChatResponseDto`, `ChatSource` - Chat API
+- `InsightGenerateRequestDto` - Insight generation request
 
 ### Constants
 - `EventType` - Enum of all tracking event types:
@@ -53,24 +67,24 @@ src/
 
 ```typescript
 import {
+  // Types
   TrackingEvent,
   Product,
-  EventType,
-  products
-} from '@flowtel/shared';
+  Cart,
+  CartItem,
+  TrackerConfig,
 
-// Type-safe event handling
-const event: TrackingEvent = {
-  id: 'evt-123',
-  shopId: 'shop_123',
-  sessionId: 'sess-abc',
-  eventType: EventType.ADD_TO_CART,
-  eventName: 'Add to Cart',
-  properties: { productId: 'prod-001', quantity: 1 },
-  timestamp: new Date().toISOString(),
-  url: '/products/prod-001',
-  userAgent: navigator.userAgent,
-};
+  // API DTOs
+  CreateEventDto,
+  EventsQueryDto,
+  PaginatedResponseDto,
+
+  // Constants
+  EventType,
+
+  // Data
+  products,
+} from '@flowtel/shared';
 ```
 
 ## Build
@@ -79,6 +93,12 @@ const event: TrackingEvent = {
 pnpm build   # Compiles TypeScript to dist/
 pnpm clean   # Removes dist/
 ```
+
+## Package Config
+
+- ESM only (`"type": "module"`)
+- Exports map for proper module resolution
+- TypeScript declarations included
 
 ## Conventions
 

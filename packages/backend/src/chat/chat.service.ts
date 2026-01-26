@@ -4,7 +4,7 @@ import { ChatResponseDto, ChatSource, Stats } from '@flowtel/shared';
 import { StatsService } from '../stats/stats.service';
 import { EventsService } from '../events/events.service';
 import { InsightsService } from '../insights/insights.service';
-import { LlmService } from './llm/llm.service';
+import { LlmService } from '../llm/llm.service';
 import { Event } from '../events/entities/event.entity';
 import { InsightEntity } from '../insights/entities/insight.entity';
 
@@ -34,14 +34,7 @@ export class ChatService {
 
     const contextPrompt = this.buildContextPrompt(stats, recentEvents, insights);
 
-    const answer = await this.llmService.complete({
-      messages: [
-        { role: 'system', content: contextPrompt },
-        { role: 'user', content: question },
-      ],
-      temperature: 0.3,
-      maxTokens: 1000,
-    });
+    const answer = await this.llmService.chat(contextPrompt, question);
 
     const sources = this.extractSources(stats, recentEvents, insights);
 
