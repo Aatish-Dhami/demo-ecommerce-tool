@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { InsightEntity } from './entities/insight.entity';
+import { InsightRepository } from './infrastructure/insight.repository';
 import { InsightsService } from './insights.service';
 import { InsightGenerationService } from './application/insight-generation.service';
 import { StatsModule } from '../stats/stats.module';
@@ -10,7 +11,7 @@ import { StatsModule } from '../stats/stats.module';
     TypeOrmModule.forFeature([InsightEntity]),
     StatsModule,
   ],
-  providers: [InsightsService, InsightGenerationService],
-  exports: [InsightsService, InsightGenerationService],
+  providers: [InsightsService, InsightRepository, InsightGenerationService],
+  exports: [InsightsService, InsightRepository, InsightGenerationService],
 })
 export class InsightsModule {}
