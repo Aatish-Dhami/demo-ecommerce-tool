@@ -1,5 +1,4 @@
-import { EventList } from './components/EventList';
-import { StatsOverview } from './pages/StatsOverview';
+import { EventsPage, StatsOverview } from './pages';
 import './App.css';
 
 function App() {
@@ -10,7 +9,7 @@ function App() {
       </header>
       <main className="app__main">
         <StatsOverview />
-        <EventList />
+        <EventsPage />
       </main>
     </div>
   );
