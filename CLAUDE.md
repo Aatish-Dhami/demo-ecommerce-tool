@@ -173,7 +173,19 @@ VITE_API_URL=http://localhost:4000
 | `@flowtel/tracker` | ✅ Functional | init, track, HTTP send with retry, auto page views |
 | `@flowtel/shop` | ✅ Functional | Product list, detail (with tracking), cart (with tracking), checkout (checkout_started, purchase_completed events), order confirmation, tracker integration |
 | `@flowtel/backend` | ✅ Functional | Database, Event entity, Events/Stats/Insights/Chat controllers, Environment configuration with validation, CORS configuration |
-| `@flowtel/dashboard` | 🟡 Partial | React Router routing, DashboardLayout with sidebar nav, Stats/Events/Insights/Chat pages, API client service, StatsOverview connected to backend |
+| `@flowtel/dashboard` | 🟡 Partial | React Router routing, DashboardLayout with sidebar nav, Stats/Events/Insights/Chat pages, API client service, StatsOverview connected to backend, environment configuration |
+
+### Dashboard Environment Configuration
+The dashboard uses type-safe environment configuration:
+- `packages/dashboard/.env.example`: Template for environment variables
+- `packages/dashboard/src/config.ts`: Centralized config module with type-safe access
+
+```typescript
+import { config } from './config';
+
+// Available config properties:
+config.apiUrl  // string - API endpoint URL (default: http://localhost:4000)
+```
 
 ### Dashboard API Client
 
@@ -216,6 +228,15 @@ The dashboard uses React Router for client-side routing:
 - `/chat` → ChatPage
 - All routes wrapped with DashboardLayout (sidebar navigation with Outlet)
 
+### Backend StatsModule (TASK-82)
+The StatsModule provides statistics aggregation:
+- **File**: `packages/backend/src/stats/stats.module.ts`
+- **Service**: `StatsAggregationService` (stats-aggregation.service.ts)
+- **Controller**: `StatsController` at `/api/stats`
+- **Imports**: `EventsModule`, `TypeOrmModule.forFeature([Event])`
+- **Exports**: `StatsAggregationService` for use by InsightsModule and ChatModule
+- **Methods**: `getStats(query)` returns aggregated stats (totalEvents, revenue, conversion rate, top products)
+
 ### Next Steps
 1. ~~Integrate tracker into shop~~ ✅ Done (TASK-68, TASK-71)
 2. ~~Add tracking to ProductList~~ ✅ Done (TASK-69)
@@ -224,8 +245,11 @@ The dashboard uses React Router for client-side routing:
 5. ~~Configure dashboard routing~~ ✅ Done (TASK-79)
 6. ~~Create NestJS ChatModule~~ ✅ Done (TASK-84) - ChatModule with ChatService and ChatController fully implemented
 7. ~~Create NestJS LLMModule~~ ✅ Done (TASK-85) - Global LLM module with OpenAI/Anthropic support
-8. Build more dashboard UI components (charts, visualizations)
-9. Enhance AI insights generation
+8. ~~Create NestJS StatsModule~~ ✅ Done (TASK-82) - StatsAggregationService with EventsModule import
+9. ~~Add environment configuration to dashboard~~ ✅ Done (TASK-90)
+10. ~~Add environment configuration to backend~~ ✅ Done (TASK-88) - ConfigModule with validation
+11. Build more dashboard UI components (charts, visualizations)
+12. Enhance AI insights generation
 
 ### Dashboard EventsPage Integration
 The EventsPage is fully integrated with the backend API:

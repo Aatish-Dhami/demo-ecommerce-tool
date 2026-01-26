@@ -1,13 +1,13 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { Stats, StatsQueryDto } from '@flowtel/shared';
-import { StatsService } from './stats.service';
+import { StatsAggregationService } from './stats-aggregation.service';
 
 @Controller('api/stats')
 export class StatsController {
-  constructor(private readonly statsService: StatsService) {}
+  constructor(private readonly statsAggregationService: StatsAggregationService) {}
 
   @Get()
   async getStats(@Query() query: StatsQueryDto): Promise<Stats> {
-    return this.statsService.getStats(query);
+    return this.statsAggregationService.getStats(query);
   }
 }
