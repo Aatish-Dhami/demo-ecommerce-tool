@@ -30,7 +30,7 @@ export const routes: RouteObject[] = [
         element: <CheckoutPage />,
       },
       {
-        path: 'confirmation',
+        path: 'order-confirmation',
         element: <OrderConfirmationPage />,
       },
     ],
