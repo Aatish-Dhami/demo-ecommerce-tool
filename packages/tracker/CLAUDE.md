@@ -6,9 +6,9 @@ Embeddable JavaScript tracking script for capturing e-commerce events.
 
 A lightweight, vanilla TypeScript tracking library that:
 - Captures user interactions on e-commerce sites
-- Batches and sends events to the backend (TODO)
-- Persists session across page loads (TODO)
-- Queues events when offline (TODO)
+- Sends events to the backend with retry logic
+- Auto-tracks page views on route changes
+- Manages session across page loads
 
 ## Tech Stack
 
@@ -16,41 +16,45 @@ A lightweight, vanilla TypeScript tracking library that:
 - Bundled with esbuild
 - Output: Single `tracker.js` file (IIFE format)
 
-## Current Structure
+## Structure
 
 ```
 src/
-└── index.ts              # Main entry with tracker API
+├── index.ts              # Main tracker API (init, track, destroy)
+├── sender.ts             # HTTP transport with retry logic
+└── pageview.ts           # Auto page view tracking
 ```
 
-### Planned Structure (TODO)
-```
-src/
-├── index.ts              # Main entry, global `tracker` object
-├── core/
-│   ├── Session.ts        # Session management
-│   └── Queue.ts          # Event queue with batching
-├── transport/
-│   └── http.ts           # HTTP transport layer
-└── utils/
-    ├── storage.ts        # LocalStorage helpers
-    └── uuid.ts           # UUID generation
-```
-
-## Current API
+## API
 
 ```typescript
-// Initialize tracker
-tracker.init(config: TrackerConfig): void
+// Initialize tracker (required before tracking)
+tracker.init({
+  shopId: 'shop_123',
+  endpoint: 'http://localhost:4000/api/events',
+  apiKey: 'your_api_key',
+  debug: true,                    // Optional: console logging
+  autoTrackPageViews: true,       // Optional: auto track route changes
+});
 
 // Track custom event
-tracker.track(eventType: string, properties?: object): void
+tracker.track('add_to_cart', {
+  productId: 'prod-001',
+  name: 'Wireless Headphones',
+  price: 149.99,
+  quantity: 1,
+});
 
-// Get current config
-tracker.getConfig(): TrackerConfig | null
+// Manual page view (if autoTrackPageViews is false)
+tracker.trackPageView();
 
-// Check if initialized
-tracker.isInitialized(): boolean
+// Get current state
+tracker.getConfig();       // TrackerConfig | null
+tracker.isInitialized();   // boolean
+tracker.getSessionId();    // string | null
+
+// Cleanup
+tracker.destroy();
 ```
 
 ## Usage
@@ -63,24 +67,34 @@ tracker.isInitialized(): boolean
   tracker.init({
     shopId: 'shop_123',
     endpoint: 'http://localhost:4000/api/events',
-    debug: true  // Enable console logging
+    apiKey: 'your_api_key',
+    debug: true
   });
 </script>
 ```
 
-### Track Events
+### Track E-commerce Events
 
 ```javascript
+// Product viewed
 tracker.track('product_viewed', {
   productId: 'prod-001',
   name: 'Wireless Headphones',
   price: 149.99
 });
 
+// Add to cart
 tracker.track('add_to_cart', {
   productId: 'prod-001',
   quantity: 1,
   price: 149.99
+});
+
+// Purchase completed
+tracker.track('purchase_completed', {
+  orderId: 'ord-123',
+  total: 149.99,
+  items: [{ productId: 'prod-001', quantity: 1 }]
 });
 ```
 
@@ -88,33 +102,49 @@ tracker.track('add_to_cart', {
 
 ```typescript
 interface TrackerConfig {
-  shopId: string;           // Required: Shop identifier
-  endpoint: string;         // Required: API endpoint
-  batchSize?: number;       // Events per batch (default: 10)
-  flushInterval?: number;   // MS between flushes (default: 5000)
-  debug?: boolean;          // Enable console logging (default: false)
+  shopId: string;              // Required: Shop identifier
+  endpoint: string;            // Required: API endpoint
+  apiKey: string;              // Required: API key for auth
+  batchSize?: number;          // Events per batch (default: 10)
+  flushInterval?: number;      // MS between flushes (default: 5000)
+  debug?: boolean;             // Enable console logging (default: false)
+  autoTrackPageViews?: boolean; // Auto track route changes (default: true)
 }
 ```
+
+## HTTP Transport (sender.ts)
+
+- POST events to configured endpoint
+- Automatic retry with exponential backoff
+- Max 3 retries for server errors (5xx) and network failures
+- No retry for client errors (4xx)
+- Debug logging for send status
+
+## Page View Tracking (pageview.ts)
+
+- Listens to `popstate` events (browser back/forward)
+- Listens to `pushState`/`replaceState` via monkey-patching
+- Tracks: `path`, `title`, `referrer`
+- Cleanup on `tracker.destroy()`
 
 ## Implementation Status
 
 | Feature | Status |
 |---------|--------|
 | `init()` with config validation | ✅ Done |
-| `track()` method (logging only) | ✅ Done |
-| `getConfig()` / `isInitialized()` | ✅ Done |
-| Event queue with batching | ⏳ TODO |
-| HTTP transport to backend | ⏳ TODO |
-| Session ID generation | ⏳ TODO |
-| localStorage persistence | ⏳ TODO |
+| `track()` with HTTP send | ✅ Done |
+| HTTP transport with retry | ✅ Done |
+| Auto page view tracking | ✅ Done |
+| Session ID generation | ✅ Done |
+| `destroy()` cleanup | ✅ Done |
+| Event batching | ⏳ TODO |
+| localStorage queue persistence | ⏳ TODO |
 | Offline queue with retry | ⏳ TODO |
-| Auto page_view tracking | ⏳ TODO |
 
 ## Build
 
 ```bash
 pnpm build       # Bundle to dist/tracker.js
-pnpm build:min   # Minified production build
 pnpm typecheck   # Type check without emit
 pnpm clean       # Remove dist/
 ```
@@ -130,4 +160,4 @@ pnpm clean       # Remove dist/
 - Types imported from `@flowtel/shared` (build-time only)
 - Debug logs prefixed with `[Flowtel Tracker]`
 - Warns on double initialization
-- Throws on missing required config
+- Throws on missing required config (shopId, endpoint, apiKey)

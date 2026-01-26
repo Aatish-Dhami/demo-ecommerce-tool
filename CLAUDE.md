@@ -140,10 +140,26 @@ VITE_SHOP_ID=shop_123
 VITE_API_URL=http://localhost:4000
 ```
 
+## Implementation Status
+
+| Package | Status | What's Done |
+|---------|--------|-------------|
+| `@flowtel/shared` | ✅ Complete | Types, DTOs, EventType enum, mock products |
+| `@flowtel/tracker` | ✅ Functional | init, track, HTTP send with retry, auto page views |
+| `@flowtel/shop` | ✅ Functional | Product list, detail, cart, checkout, order confirmation |
+| `@flowtel/backend` | 🟡 Partial | Database, Event entity, Events service (needs controller) |
+| `@flowtel/dashboard` | ⏳ Scaffold | Basic React app only |
+
+### Next Steps
+1. Add Events controller to backend (POST/GET `/api/events`)
+2. Integrate tracker into shop
+3. Build dashboard UI (stats, charts, event list)
+4. Add AI insights generation
+
 ## Key Decisions
 
 1. **Monorepo with pnpm workspaces** - Shared types, unified tooling
-2. **DDD + CQRS in backend** - Separate read/write models for events
-3. **SQLite for demo** - Easy setup, can swap to PostgreSQL
-4. **Vite for frontends** - Fast dev server, optimized builds
-5. **Vanilla TS tracker** - Minimal bundle size, no framework dependencies
+2. **TypeORM + SQLite** - Simple setup, easy to swap to PostgreSQL
+3. **Vite for frontends** - Fast dev server, optimized builds
+4. **Vanilla TS tracker** - Minimal bundle size, no framework dependencies
+5. **ESM modules** - Modern JavaScript, tree-shakeable
