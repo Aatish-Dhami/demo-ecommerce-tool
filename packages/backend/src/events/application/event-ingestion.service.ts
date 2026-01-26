@@ -1,10 +1,9 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { randomUUID } from 'crypto';
 import { CreateEventDto } from '@flowtel/shared';
 import { Event } from '../entities/event.entity';
+import { EventRepository } from '../infrastructure/event.repository';
 import {
   EventIngestedEvent,
   BatchEventsIngestedEvent,
@@ -13,19 +12,18 @@ import {
 @Injectable()
 export class EventIngestionService {
   constructor(
-    @InjectRepository(Event)
-    private readonly eventRepository: Repository<Event>,
+    private readonly eventRepository: EventRepository,
     private readonly eventEmitter: EventEmitter2,
   ) {}
 
   async ingestEvent(dto: CreateEventDto): Promise<Event> {
     this.validateEvent(dto);
 
-    const event = this.eventRepository.create({
+    const event = {
       id: randomUUID(),
       ...dto,
       timestamp: dto.timestamp || new Date().toISOString(),
-    });
+    } as Event;
 
     const savedEvent = await this.eventRepository.save(event);
 
@@ -61,15 +59,16 @@ export class EventIngestionService {
     });
 
     const timestamp = new Date().toISOString();
-    const events = dtos.map((dto) =>
-      this.eventRepository.create({
-        id: randomUUID(),
-        ...dto,
-        timestamp: dto.timestamp || timestamp,
-      }),
+    const events = dtos.map(
+      (dto) =>
+        ({
+          id: randomUUID(),
+          ...dto,
+          timestamp: dto.timestamp || timestamp,
+        }) as Event,
     );
 
-    const savedEvents = await this.eventRepository.save(events);
+    const savedEvents = await this.eventRepository.saveBatch(events);
 
     const shopId = savedEvents[0]?.shopId || '';
     this.eventEmitter.emit(
