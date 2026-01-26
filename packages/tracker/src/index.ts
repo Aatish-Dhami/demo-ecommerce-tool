@@ -4,32 +4,34 @@
  * Usage:
  * <script src="http://localhost:4000/tracker.js"></script>
  * <script>
- *   tracker.init({ shopId: 'shop_123', endpoint: 'http://localhost:4000/api/events' });
+ *   tracker.init({
+ *     shopId: 'shop_123',
+ *     endpoint: 'http://localhost:4000/api/events',
+ *     apiKey: 'your_api_key'
+ *   });
  * </script>
  */
 
-import type { CreateEventDto } from '@flowtel/shared';
+import type { CreateEventDto, TrackerConfig } from '@flowtel/shared';
 import { sendEvents } from './sender';
-import { generateUUID } from './utils/uuid';
 
 /**
- * Configuration options for the tracker
+ * Generate a unique ID using crypto.randomUUID with fallback for older browsers
  */
-export interface TrackerConfig {
-  /** Required: Unique identifier for the shop */
-  shopId: string;
-  /** Required: API endpoint for event ingestion */
-  endpoint: string;
-  /** Events per batch before flush (default: 10) */
-  batchSize?: number;
-  /** Milliseconds between automatic flushes (default: 5000) */
-  flushInterval?: number;
-  /** Enable debug logging to console (default: false) */
-  debug?: boolean;
+function generateId(): string {
+  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+    return crypto.randomUUID();
+  }
+  // Fallback for older browsers
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    const r = (Math.random() * 16) | 0;
+    const v = c === 'x' ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
 }
 
 /**
- * Tracker state - will be expanded in future tasks
+ * Internal tracker state
  */
 interface TrackerState {
   initialized: boolean;
@@ -42,16 +44,6 @@ const state: TrackerState = {
   config: null,
   sessionId: null,
 };
-
-/**
- * Get or generate the session ID
- */
-function getSessionId(): string {
-  if (!state.sessionId) {
-    state.sessionId = generateUUID();
-  }
-  return state.sessionId;
-}
 
 /**
  * Convert event type to human-readable event name
@@ -79,6 +71,9 @@ export function init(config: TrackerConfig): void {
   if (!config.endpoint) {
     throw new Error('[Flowtel Tracker] endpoint is required');
   }
+  if (!config.apiKey) {
+    throw new Error('[Flowtel Tracker] apiKey is required');
+  }
 
   state.config = {
     batchSize: 10,
@@ -87,40 +82,42 @@ export function init(config: TrackerConfig): void {
     ...config,
   };
 
+  state.sessionId = generateId();
   state.initialized = true;
 
   if (state.config.debug) {
     console.log('[Flowtel Tracker] Initialized with config:', state.config);
+    console.log('[Flowtel Tracker] Session ID:', state.sessionId);
   }
 }
 
 /**
  * Track a custom event
- * @param eventType - Type of event (e.g., 'product_viewed', 'add_to_cart')
+ * @param eventName - Name/type of event (e.g., 'page_view', 'add_to_cart')
  * @param properties - Event-specific data
  */
 export async function track(
-  eventType: string,
+  eventName: string,
   properties: Record<string, unknown> = {}
 ): Promise<void> {
-  if (!state.initialized || !state.config) {
+  if (!state.initialized || !state.config || !state.sessionId) {
     console.warn('[Flowtel Tracker] Not initialized. Call tracker.init() first.');
     return;
   }
 
   const event: CreateEventDto = {
     shopId: state.config.shopId,
-    sessionId: getSessionId(),
-    eventType,
-    eventName: formatEventName(eventType),
+    sessionId: state.sessionId,
+    eventType: eventName,
+    eventName: formatEventName(eventName),
     properties,
-    url: window.location.href,
-    userAgent: navigator.userAgent,
     timestamp: new Date().toISOString(),
+    url: typeof window !== 'undefined' ? window.location.href : '',
+    userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : '',
   };
 
   if (state.config.debug) {
-    console.log('[Flowtel Tracker] Track:', eventType, properties);
+    console.log('[Flowtel Tracker] Track event:', event);
   }
 
   // Send immediately (batching will be added in a future task)
@@ -150,10 +147,19 @@ export function isInitialized(): boolean {
   return state.initialized;
 }
 
+/**
+ * Get the current session ID
+ * @returns Current session ID or null if not initialized
+ */
+export function getSessionId(): string | null {
+  return state.sessionId;
+}
+
 // Export as default object for IIFE global assignment
 export default {
   init,
   track,
   getConfig,
   isInitialized,
+  getSessionId,
 };
