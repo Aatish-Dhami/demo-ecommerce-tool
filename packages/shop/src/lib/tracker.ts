@@ -1,15 +1,13 @@
 import { init, track, destroy, flush, isInitialized } from '@flowtel/tracker';
 import { EventType } from '@flowtel/shared';
+import { config } from '../config';
 
 export function initializeTracker(): void {
   if (isInitialized()) {
     return;
   }
 
-  const apiUrl = import.meta.env.VITE_API_URL;
-  const shopId = import.meta.env.VITE_SHOP_ID;
-  const apiKey = import.meta.env.VITE_API_KEY;
-  const debug = import.meta.env.VITE_TRACKER_DEBUG === 'true';
+  const { apiUrl, shopId, apiKey, trackerDebug } = config;
 
   if (!apiUrl || !shopId || !apiKey) {
     console.warn('[Flowtel] Missing required environment variables for tracker');
@@ -20,7 +18,7 @@ export function initializeTracker(): void {
     shopId,
     endpoint: `${apiUrl}/api/events`,
     apiKey,
-    debug,
+    debug: trackerDebug,
     autoTrackPageViews: true,
   });
 }

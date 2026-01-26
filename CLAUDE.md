@@ -172,8 +172,8 @@ VITE_API_URL=http://localhost:4000
 | `@flowtel/shared` | ✅ Complete | Types, DTOs, EventType enum, mock products |
 | `@flowtel/tracker` | ✅ Functional | init, track, HTTP send with retry, auto page views |
 | `@flowtel/shop` | ✅ Functional | Product list, detail (with tracking), cart (with tracking), checkout (checkout_started, purchase_completed events), order confirmation, tracker integration |
-| `@flowtel/backend` | ✅ Functional | Database, Event entity, Events/Stats/Insights/Chat controllers, Environment configuration with validation |
-| `@flowtel/dashboard` | 🟡 Partial | Basic React app, API client service, Stats/Events/Insights/Chat UI |
+| `@flowtel/backend` | ✅ Functional | Database, Event entity, Events/Stats/Insights/Chat controllers, Environment configuration with validation, CORS configuration |
+| `@flowtel/dashboard` | 🟡 Partial | React Router routing, DashboardLayout with sidebar nav, Stats/Events/Insights/Chat pages, API client service, StatsOverview connected to backend |
 
 ### Dashboard API Client
 
@@ -190,6 +190,15 @@ apiService.generateInsights(request?)  // POST /api/insights/generate
 apiService.sendChatMessage(request)    // POST /api/chat
 ```
 
+### Dashboard StatsOverview
+The StatsOverview page (`packages/dashboard/src/pages/StatsOverview.tsx`) displays real-time statistics:
+- **Data fetching**: Uses `useStats` hook that calls `/api/stats` endpoint on mount
+- **Loading state**: Displays spinner while fetching data
+- **Error handling**: Shows user-friendly error messages with retry capability
+- **Stats displayed**: Total Events, Purchases, Revenue, Conversion Rate
+- **Auto-refresh**: Optional 30-second auto-refresh with manual refresh button
+- **Responsive**: Grid layout adapts to screen size (4 → 2 → 1 columns)
+
 ### Shop Tracking Events
 The shop tracks the following events:
 - `page_view` - ProductList mount (url, path, page properties)
@@ -199,17 +208,57 @@ The shop tracks the following events:
 - `checkout_started` - Checkout page view
 - `purchase_completed` - Order confirmation
 
+### Dashboard Routing (TASK-79)
+The dashboard uses React Router for client-side routing:
+- `/` → StatsPage (wraps StatsOverview)
+- `/events` → EventsPage
+- `/insights` → InsightsPage
+- `/chat` → ChatPage
+- All routes wrapped with DashboardLayout (sidebar navigation with Outlet)
+
 ### Next Steps
 1. ~~Integrate tracker into shop~~ ✅ Done (TASK-68, TASK-71)
 2. ~~Add tracking to ProductList~~ ✅ Done (TASK-69)
-3. Build more dashboard UI components (charts, visualizations)
-4. Enhance AI insights generation
+3. ~~Connect StatsOverview to backend~~ ✅ Done (TASK-74)
+4. ~~Connect EventsPage to backend API~~ ✅ Done (TASK-75)
+5. ~~Configure dashboard routing~~ ✅ Done (TASK-79)
+6. ~~Create NestJS ChatModule~~ ✅ Done (TASK-84) - ChatModule with ChatService and ChatController fully implemented
+7. ~~Create NestJS LLMModule~~ ✅ Done (TASK-85) - Global LLM module with OpenAI/Anthropic support
+8. Build more dashboard UI components (charts, visualizations)
+9. Enhance AI insights generation
+
+### Dashboard EventsPage Integration
+The EventsPage is fully integrated with the backend API:
+- `packages/dashboard/src/hooks/useEvents.ts`: Custom hook for fetching/filtering events
+- `packages/dashboard/src/api/events.ts`: API function with query param support
+- `packages/dashboard/src/components/EventList/`: EventList, EventFilters, Pagination components
+- Supports: event type filtering, pagination, loading/error states
 
 ### Shop Tracker Integration
 The shop uses a vite alias to import tracker source directly:
 - `vite.config.ts`: Alias `@flowtel/tracker` to `../tracker/src/index.ts`
 - `tsconfig.json`: Path mapping for TypeScript resolution
 - `CartContext.tsx`: Tracks `add_to_cart` and `remove_from_cart` events
+
+### Shop Configuration
+The shop uses a centralized config module at `packages/shop/src/config.ts`:
+```typescript
+import { config } from './config';
+
+// Available properties:
+config.apiUrl        // VITE_API_URL (default: 'http://localhost:4000')
+config.shopId        // VITE_SHOP_ID
+config.apiKey        // VITE_API_KEY
+config.trackerDebug  // VITE_TRACKER_DEBUG === 'true'
+```
+
+### Backend Environment Configuration (TASK-88)
+The backend uses a centralized configuration module with validation:
+- `packages/backend/src/config/configuration.ts`: Typed config factory with ServerConfig, DatabaseConfig, LlmConfig interfaces
+- `packages/backend/src/config/env.validation.ts`: Environment validation using class-validator
+- Configuration is validated on startup - invalid values prevent app from starting
+- Uses ConfigService for type-safe access to configuration values
+- CORS origins configurable via `CORS_ORIGINS` environment variable
 
 ## Key Decisions
 
