@@ -8,6 +8,7 @@ export interface InsightsQueryOptions {
   type?: InsightType;
   page?: number;
   limit?: number;
+  offset?: number;
 }
 
 @Injectable()
@@ -24,9 +25,10 @@ export class InsightRepository {
   async findAll(
     options?: InsightsQueryOptions,
   ): Promise<PaginatedResponseDto<InsightEntity>> {
-    const page = options?.page || 1;
     const limit = options?.limit || 20;
-    const skip = (page - 1) * limit;
+    const skip =
+      options?.offset ?? ((options?.page || 1) - 1) * limit;
+    const page = options?.page || Math.floor(skip / limit) + 1;
 
     const queryBuilder = this.repository.createQueryBuilder('insight');
 
