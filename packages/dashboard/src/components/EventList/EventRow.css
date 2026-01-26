@@ -1,0 +1,130 @@
+.event-row {
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.event-row:hover {
+  background-color: #f9fafb;
+}
+
+.event-row__cell {
+  padding: 0.75rem 1rem;
+  vertical-align: middle;
+}
+
+.event-row__cell--type {
+  width: 160px;
+}
+
+.event-row__cell--timestamp {
+  width: 140px;
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+.event-row__cell--name {
+  color: #374151;
+}
+
+.event-row__cell--properties {
+  width: 140px;
+  text-align: right;
+}
+
+.event-row__badge {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.event-row__badge--page-view {
+  background-color: #f3f4f6;
+  color: #6b7280;
+}
+
+.event-row__badge--product-viewed {
+  background-color: #dbeafe;
+  color: #1d4ed8;
+}
+
+.event-row__badge--add-to-cart {
+  background-color: #d1fae5;
+  color: #059669;
+}
+
+.event-row__badge--remove-from-cart {
+  background-color: #fef3c7;
+  color: #d97706;
+}
+
+.event-row__badge--checkout-started {
+  background-color: #ede9fe;
+  color: #7c3aed;
+}
+
+.event-row__badge--purchase-completed {
+  background-color: #d1fae5;
+  color: #047857;
+}
+
+.event-row__expand-button {
+  padding: 0.25rem 0.5rem;
+  background: transparent;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  color: #3b82f6;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.event-row__expand-button:hover {
+  background-color: #f0f9ff;
+}
+
+.event-row__expand-button:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+.event-row__no-properties {
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+.event-row__properties-row {
+  background-color: #f9fafb;
+}
+
+.event-row__properties-cell {
+  padding: 0;
+}
+
+.event-row__properties-content {
+  margin: 0;
+  padding: 1rem;
+  background-color: #1f2937;
+  color: #e5e7eb;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  overflow-x: auto;
+  border-radius: 0;
+}
+
+@media (max-width: 768px) {
+  .event-row__cell {
+    padding: 0.5rem;
+  }
+
+  .event-row__cell--timestamp {
+    font-size: 0.75rem;
+  }
+
+  .event-row__badge {
+    font-size: 0.625rem;
+    padding: 0.125rem 0.375rem;
+  }
+}
