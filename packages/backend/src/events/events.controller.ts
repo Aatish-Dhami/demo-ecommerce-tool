@@ -11,13 +11,18 @@ import {
   CreateEventDto,
   EventsQueryDto,
   PaginatedResponseDto,
+  TrackingEvent,
 } from '@flowtel/shared';
-import { EventsService } from './events.service';
+import { EventIngestionService } from './application/event-ingestion.service';
+import { EventQueryService } from './application/event-query.service';
 import { Event } from './entities/event.entity';
 
 @Controller('api/events')
 export class EventsController {
-  constructor(private readonly eventsService: EventsService) {}
+  constructor(
+    private readonly eventIngestionService: EventIngestionService,
+    private readonly eventQueryService: EventQueryService,
+  ) {}
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
@@ -25,15 +30,15 @@ export class EventsController {
     @Body() createEventDto: CreateEventDto | CreateEventDto[],
   ): Promise<Event | Event[]> {
     if (Array.isArray(createEventDto)) {
-      return this.eventsService.createBatch(createEventDto);
+      return this.eventIngestionService.ingestBatch(createEventDto);
     }
-    return this.eventsService.create(createEventDto);
+    return this.eventIngestionService.ingestEvent(createEventDto);
   }
 
   @Get()
   async findAll(
     @Query() query: EventsQueryDto,
-  ): Promise<PaginatedResponseDto<Event>> {
-    return this.eventsService.findAll(query);
+  ): Promise<PaginatedResponseDto<TrackingEvent>> {
+    return this.eventQueryService.getEvents(query);
   }
 }
