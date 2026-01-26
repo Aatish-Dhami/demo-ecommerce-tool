@@ -1,0 +1,48 @@
+.event-filters {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.event-filters__label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+.event-filters__select {
+  padding: 0.5rem 2rem 0.5rem 0.75rem;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  color: #374151;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.5rem center;
+  min-width: 180px;
+}
+
+.event-filters__select:hover {
+  border-color: #d1d5db;
+}
+
+.event-filters__select:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+  border-color: #3b82f6;
+}
+
+@media (max-width: 640px) {
+  .event-filters {
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+  }
+
+  .event-filters__select {
+    width: 100%;
+  }
+}
