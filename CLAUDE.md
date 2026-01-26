@@ -189,8 +189,16 @@ The shop tracks the following events:
 1. ~~Integrate tracker into shop~~ ✅ Done (TASK-68, TASK-71)
 2. ~~Add tracking to ProductList~~ ✅ Done (TASK-69)
 3. ~~Connect StatsOverview to backend~~ ✅ Done (TASK-74)
-4. Build more dashboard UI components (charts, visualizations)
-5. Enhance AI insights generation
+4. ~~Connect EventsPage to backend API~~ ✅ Done (TASK-75)
+5. Build more dashboard UI components (charts, visualizations)
+6. Enhance AI insights generation
+
+### Dashboard EventsPage Integration
+The EventsPage is fully integrated with the backend API:
+- `packages/dashboard/src/hooks/useEvents.ts`: Custom hook for fetching/filtering events
+- `packages/dashboard/src/api/events.ts`: API function with query param support
+- `packages/dashboard/src/components/EventList/`: EventList, EventFilters, Pagination components
+- Supports: event type filtering, pagination, loading/error states
 
 ### Shop Tracker Integration
 The shop uses a vite alias to import tracker source directly:
