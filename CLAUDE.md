@@ -131,6 +131,7 @@ pnpm lint             # Lint all packages
 DATABASE_URL=sqlite:./data.db
 OPENAI_API_KEY=sk-...
 PORT=4000
+CORS_ORIGINS=http://localhost:3000,http://localhost:3001,http://localhost:5173  # Comma-separated, optional
 
 # Shop
 VITE_API_URL=http://localhost:4000
@@ -149,7 +150,7 @@ VITE_API_URL=http://localhost:4000
 | `@flowtel/shared` | ✅ Complete | Types, DTOs, EventType enum, mock products |
 | `@flowtel/tracker` | ✅ Functional | init, track, HTTP send with retry, auto page views |
 | `@flowtel/shop` | ✅ Functional | Product list, detail (with tracking), cart (with tracking), checkout (checkout_started, purchase_completed events), order confirmation, tracker integration |
-| `@flowtel/backend` | ✅ Functional | Database, Event entity, Events/Stats/Insights/Chat controllers |
+| `@flowtel/backend` | ✅ Functional | Database, Event entity, Events/Stats/Insights/Chat controllers, CORS configuration |
 | `@flowtel/dashboard` | 🟡 Partial | Basic React app, API client service, Stats/Events/Insights/Chat UI, StatsOverview connected to backend |
 
 ### Dashboard API Client
@@ -197,6 +198,13 @@ The shop uses a vite alias to import tracker source directly:
 - `vite.config.ts`: Alias `@flowtel/tracker` to `../tracker/src/index.ts`
 - `tsconfig.json`: Path mapping for TypeScript resolution
 - `CartContext.tsx`: Tracks `add_to_cart` and `remove_from_cart` events
+
+### Backend CORS Configuration
+CORS is configured in `packages/backend/src/main.ts`:
+- **Default origins**: localhost:3000 (shop), localhost:3001 (dashboard), localhost:5173 (Vite dev)
+- **Environment variable**: Set `CORS_ORIGINS` to override defaults (comma-separated list)
+- **Methods allowed**: GET, POST, PUT, DELETE, PATCH, OPTIONS
+- **Credentials**: Enabled
 
 ## Key Decisions
 
