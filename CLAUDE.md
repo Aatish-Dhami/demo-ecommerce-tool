@@ -148,7 +148,7 @@ VITE_API_URL=http://localhost:4000
 |---------|--------|-------------|
 | `@flowtel/shared` | ✅ Complete | Types, DTOs, EventType enum, mock products |
 | `@flowtel/tracker` | ✅ Functional | init, track, HTTP send with retry, auto page views |
-| `@flowtel/shop` | ✅ Functional | Product list, detail, cart (with tracking), checkout (checkout_started, purchase_completed events), order confirmation, tracker integration |
+| `@flowtel/shop` | ✅ Functional | Product list, detail (with tracking), cart (with tracking), checkout (checkout_started, purchase_completed events), order confirmation, tracker integration |
 | `@flowtel/backend` | ✅ Functional | Database, Event entity, Events/Stats/Insights/Chat controllers |
 | `@flowtel/dashboard` | 🟡 Partial | Basic React app, API client service, Stats/Events/Insights/Chat UI |
 
@@ -167,10 +167,20 @@ apiService.generateInsights(request?)  // POST /api/insights/generate
 apiService.sendChatMessage(request)    // POST /api/chat
 ```
 
+### Shop Tracking Events
+The shop tracks the following events:
+- `page_view` - ProductList mount (url, path, page properties)
+- `product_viewed` - ProductDetail page view
+- `add_to_cart` - Add to cart action
+- `remove_from_cart` - Remove from cart action
+- `checkout_started` - Checkout page view
+- `purchase_completed` - Order confirmation
+
 ### Next Steps
 1. ~~Integrate tracker into shop~~ ✅ Done (TASK-68, TASK-71)
-2. Build more dashboard UI components (charts, visualizations)
-3. Enhance AI insights generation
+2. ~~Add tracking to ProductList~~ ✅ Done (TASK-69)
+3. Build more dashboard UI components (charts, visualizations)
+4. Enhance AI insights generation
 
 ### Shop Tracker Integration
 The shop uses a vite alias to import tracker source directly:
