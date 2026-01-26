@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { randomUUID } from 'crypto';
 import { ChatResponseDto, ChatSource, Stats } from '@flowtel/shared';
-import { StatsService } from '../stats/stats.service';
+import { StatsAggregationService } from '../stats/stats-aggregation.service';
 import { EventsService } from '../events/events.service';
 import { InsightsService } from '../insights/insights.service';
 import { LlmService } from '../llm/llm.service';
@@ -11,7 +11,7 @@ import { InsightEntity } from '../insights/entities/insight.entity';
 @Injectable()
 export class ChatService {
   constructor(
-    private readonly statsService: StatsService,
+    private readonly statsAggregationService: StatsAggregationService,
     private readonly eventsService: EventsService,
     private readonly insightsService: InsightsService,
     private readonly llmService: LlmService,
@@ -25,7 +25,7 @@ export class ChatService {
     const convId = conversationId || randomUUID();
 
     const [stats, eventsResult, insights] = await Promise.all([
-      this.statsService.getStats({ shopId }),
+      this.statsAggregationService.getStats({ shopId }),
       this.eventsService.findAll({ shopId, limit: 50 }),
       this.insightsService.findRecent(5),
     ]);

@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Insight } from '@flowtel/shared';
-import { StatsService } from '../../stats/stats.service';
+import { StatsAggregationService } from '../../stats/stats-aggregation.service';
 import { LlmService } from '../../llm/llm.service';
 import { InsightsService } from '../insights.service';
 
@@ -9,7 +9,7 @@ export class InsightGenerationService {
   private readonly logger = new Logger(InsightGenerationService.name);
 
   constructor(
-    private readonly statsService: StatsService,
+    private readonly statsAggregationService: StatsAggregationService,
     private readonly llmService: LlmService,
     private readonly insightsService: InsightsService,
   ) {}
@@ -18,7 +18,7 @@ export class InsightGenerationService {
     this.logger.log(`Generating insights for shop: ${shopId}`);
 
     // 1. Fetch aggregated stats (AC: fetches recent events)
-    const stats = await this.statsService.getStats({ shopId });
+    const stats = await this.statsAggregationService.getStats({ shopId });
 
     // 2. Generate insights via LLM (AC: build prompt + parse response)
     const insights = await this.llmService.generateInsight(stats);
