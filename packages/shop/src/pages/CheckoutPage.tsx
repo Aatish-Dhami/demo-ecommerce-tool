@@ -58,7 +58,7 @@ export function CheckoutPage() {
     await flush();
 
     clearCart();
-    navigate('/confirmation');
+    navigate('/order-confirmation');
   };
 
   if (cart.items.length === 0) {
