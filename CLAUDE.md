@@ -209,10 +209,11 @@ The StatsModule provides statistics aggregation:
 3. ~~Connect StatsOverview to backend~~ ✅ Done (TASK-74)
 4. ~~Connect EventsPage to backend API~~ ✅ Done (TASK-75)
 5. ~~Configure dashboard routing~~ ✅ Done (TASK-79)
-6. ~~Create NestJS LLMModule~~ ✅ Done (TASK-85) - Global LLM module with OpenAI/Anthropic support
-7. ~~Create NestJS StatsModule~~ ✅ Done (TASK-82) - StatsAggregationService with EventsModule import
-8. Build more dashboard UI components (charts, visualizations)
-9. Enhance AI insights generation
+6. ~~Create NestJS ChatModule~~ ✅ Done (TASK-84) - ChatModule with ChatService and ChatController fully implemented
+7. ~~Create NestJS LLMModule~~ ✅ Done (TASK-85) - Global LLM module with OpenAI/Anthropic support
+8. ~~Create NestJS StatsModule~~ ✅ Done (TASK-82) - StatsAggregationService with EventsModule import
+9. Build more dashboard UI components (charts, visualizations)
+10. Enhance AI insights generation
 
 ### Dashboard EventsPage Integration
 The EventsPage is fully integrated with the backend API:
@@ -226,6 +227,18 @@ The shop uses a vite alias to import tracker source directly:
 - `vite.config.ts`: Alias `@flowtel/tracker` to `../tracker/src/index.ts`
 - `tsconfig.json`: Path mapping for TypeScript resolution
 - `CartContext.tsx`: Tracks `add_to_cart` and `remove_from_cart` events
+
+### Shop Configuration
+The shop uses a centralized config module at `packages/shop/src/config.ts`:
+```typescript
+import { config } from './config';
+
+// Available properties:
+config.apiUrl        // VITE_API_URL (default: 'http://localhost:4000')
+config.shopId        // VITE_SHOP_ID
+config.apiKey        // VITE_API_KEY
+config.trackerDebug  // VITE_TRACKER_DEBUG === 'true'
+```
 
 ### Backend CORS Configuration
 CORS is configured in `packages/backend/src/main.ts`:
