@@ -42,7 +42,7 @@ export class InsightsController {
   @Post('generate')
   @HttpCode(HttpStatus.CREATED)
   async generate(@Body() dto: InsightGenerateRequestDto): Promise<Insight[]> {
-    const shopId = dto.shopId || 'default';
+    const shopId = dto.shopId || 'shop_123';
 
     try {
       this.logger.log(`Generating insights for shop: ${shopId}`);

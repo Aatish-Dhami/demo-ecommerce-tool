@@ -20,7 +20,7 @@ export class ChatController {
   @Post()
   @HttpCode(HttpStatus.OK)
   async chat(@Body() dto: ChatRequestDto): Promise<ChatResponseDto> {
-    const shopId = dto.shopId || 'default';
+    const shopId = dto.shopId || 'shop_123';
 
     try {
       return await this.chatService.askQuestion(

@@ -279,8 +279,31 @@ Focus on actionable insights that help improve business outcomes. Respond only w
       throw new LlmServiceError('Empty response from OpenAI');
     }
 
+    this.logger.log(`OpenAI raw response: ${content}`);
+
     const parsed = JSON.parse(content);
-    const insights = Array.isArray(parsed) ? parsed : parsed.insights || [];
+
+    // Handle various response formats GPT might use
+    let insights: unknown[];
+    if (Array.isArray(parsed)) {
+      insights = parsed;
+    } else if (parsed.insights) {
+      insights = parsed.insights;
+    } else if (parsed.data) {
+      insights = parsed.data;
+    } else if (parsed.results) {
+      insights = parsed.results;
+    } else if (parsed.type && parsed.title && parsed.content) {
+      // Single insight object returned directly
+      insights = [parsed];
+    } else {
+      insights = [];
+    }
+
+    this.logger.log(`Parsed insights count: ${insights.length}`);
+    if (insights.length > 0) {
+      this.logger.log(`First insight: ${JSON.stringify(insights[0])}`);
+    }
 
     return this.validateInsights(insights);
   }

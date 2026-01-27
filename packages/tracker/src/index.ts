@@ -43,6 +43,7 @@ interface TrackerState {
   config: TrackerConfig | null;
   sessionId: string | null;
   batcher: EventBatcher | null;
+  recentEvents: Map<string, number>; // deduplication key -> timestamp
 }
 
 const state: TrackerState = {
@@ -50,7 +51,51 @@ const state: TrackerState = {
   config: null,
   sessionId: null,
   batcher: null,
+  recentEvents: new Map(),
 };
+
+/** Time window for deduplication (ms) */
+const DEDUP_WINDOW_MS = 1000;
+/** Longer window for page views (ms) */
+const PAGE_VIEW_DEDUP_WINDOW_MS = 3000;
+
+/**
+ * Generate a deduplication key from event type and properties
+ */
+function generateDedupKey(eventType: string, properties: Record<string, unknown>): string {
+  // Include key identifying properties in the dedup key
+  const keyProps = ['productId', 'orderId', 'url', 'path'];
+  const propParts = keyProps
+    .filter((key) => properties[key] !== undefined)
+    .map((key) => `${key}:${properties[key]}`)
+    .join('|');
+  return `${eventType}::${propParts}`;
+}
+
+/**
+ * Check if an event is a duplicate (same event within dedup window)
+ */
+function isDuplicate(eventType: string, dedupKey: string): boolean {
+  const now = Date.now();
+  const lastSeen = state.recentEvents.get(dedupKey);
+
+  // Use longer window for page_view events
+  const windowMs = eventType === 'page_view' ? PAGE_VIEW_DEDUP_WINDOW_MS : DEDUP_WINDOW_MS;
+
+  if (lastSeen && now - lastSeen < windowMs) {
+    return true;
+  }
+
+  // Clean up old entries
+  for (const [key, timestamp] of state.recentEvents.entries()) {
+    if (now - timestamp > PAGE_VIEW_DEDUP_WINDOW_MS * 2) {
+      state.recentEvents.delete(key);
+    }
+  }
+
+  state.recentEvents.set(dedupKey, now);
+  return false;
+}
 
 /**
  * Convert event type to human-readable event name
@@ -127,6 +172,15 @@ export function track(
 ): void {
   if (!state.initialized || !state.config || !state.sessionId || !state.batcher) {
     console.warn('[Flowtel Tracker] Not initialized. Call tracker.init() first.');
+    return;
+  }
+
+  // Check for duplicate events within dedup window
+  const dedupKey = generateDedupKey(eventName, properties);
+  if (isDuplicate(eventName, dedupKey)) {
+    if (state.config.debug) {
+      console.log('[Flowtel Tracker] Skipping duplicate event:', eventName, dedupKey);
+    }
     return;
   }
 
@@ -215,6 +269,7 @@ export function destroy(): void {
   state.initialized = false;
   state.config = null;
   state.sessionId = null;
+  state.recentEvents.clear();
 }
 
 // Export as default object for IIFE global assignment

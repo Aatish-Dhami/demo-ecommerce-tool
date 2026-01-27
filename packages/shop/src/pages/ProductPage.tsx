@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { products } from '@flowtel/shared';
 import { ProductDetail } from '../components/ProductDetail/ProductDetail';
@@ -9,10 +9,12 @@ export function ProductPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { addToCart } = useCart();
+  const hasTrackedView = useRef<string | null>(null);
 
   useEffect(() => {
     const product = products.find((p) => p.id === id);
-    if (product) {
+    if (product && hasTrackedView.current !== product.id) {
+      hasTrackedView.current = product.id;
       track(EventType.PRODUCT_VIEWED, {
         productId: product.id,
         name: product.name,
